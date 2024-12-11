@@ -1,3 +1,3 @@
-import { Task } from "@/domain/tasks";
+import { Task } from "@/domain/tasks"
 
-export type CreateTaskDto = Omit<Task, "id">;
+export type CreateTaskDto = Omit<Task, "id">

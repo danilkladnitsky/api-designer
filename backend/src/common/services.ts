@@ -1,22 +1,21 @@
-import { FastifyRequest } from "fastify"
-
 export const ServiceNames = {
     HTTP: "http service",
     WEBSOCKET: "websocket service"
 } as const
 
-export interface IHttpPayload
-    extends Pick<FastifyRequest, "body" | "params" | "query"> {}
-
-export interface IHandler<TPayload = any> {
-    path: string
-    handlerFn: (payload: TPayload) => any
+export interface IHttpPayload<TBody = unknown> {
+    body: TBody
 }
 
-export interface IHttpHandler<TPayload = IHttpPayload> {
+export interface IHandler<TPayload = unknown> {
+    path: string
+    handlerFn: (payload: TPayload) => unknown
+}
+
+export interface IHttpHandler {
     path: string
     method: "get" | "post"
-    handlerFn: (payload: TPayload) => Promise<any>
+    handlerFn: (payload: any) => Promise<any>
 }
 
 export interface IHttpServerConstructor {
