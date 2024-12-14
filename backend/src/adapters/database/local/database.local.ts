@@ -24,8 +24,6 @@ export const createLocalDatabase = async (): Promise<IDatabaseAdapter> => {
             console.log("connect to local db")
         },
         close: async () => {
-            console.info("close local db")
-
             return `local db closed at ${new Date().toDateString()}`
         },
         getEntities: async <TDatabaseEntity = any>(entityName: EntityList) => {

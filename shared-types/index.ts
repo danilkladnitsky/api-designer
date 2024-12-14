@@ -3,7 +3,7 @@ export type Timestamp = string;
 export type APIMethod = "GET" | "POST";
 
 export type LLMInput = {
-    role: string;
+    role: "user" | "assistant";
     content: string;
 }
 

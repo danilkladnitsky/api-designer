@@ -9,15 +9,20 @@ export interface ILLMModule {
 }
 
 export interface ILLMModuleConstructor {
-    llmAgent: ILLMAgentAdapter
+    llmAgents: ILLMAgentAdapter[]
 }
 
-export const createLLModule = ({ llmAgent }: ILLMModuleConstructor): ILLMModule => {
+export const createLLModule = ({ llmAgents }: ILLMModuleConstructor): ILLMModule => {
     return {
-        buildCodeGraph: async (code: BuildGraphCodeDto): Promise<CodeAPIGraph[]> => {
+        buildCodeGraph: async ({ code, llm }: BuildGraphCodeDto): Promise<CodeAPIGraph[]> => {
+            const agent = llm ? llmAgents.find(a => a.name === llm) : llmAgents[0]
+            if (!agent) {
+                throw new Error("No LLM agent found")
+            }
+
             const buildGraphPrompt = `Build a graph of API calls for the following code: ${code.content}`
 
-            const response = await llmAgent.executePrompt({ role: "user", content: buildGraphPrompt })
+            const response = await agent.executePrompt({ role: "user", content: buildGraphPrompt })
 
             return JSON.parse(response.content) as CodeAPIGraph[]
         }

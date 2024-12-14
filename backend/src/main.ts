@@ -1,8 +1,12 @@
+import process from "process"
+
 import { startHttpServer } from "@/app/http/server"
 import { IServiceInstance } from "@/common/services"
 
 import { createLocalDatabase } from "./adapters/database/local/database.local"
 import { createLocalLLMAgent } from "./adapters/llm-agent/local/agent.local"
+import { createOpenAILLMAgent } from "./adapters/llm-agent/openai/agent.openai"
+import { getAppConfig } from "./app/config"
 import { createCodeController, ICodeController } from "./controllers/code.controller"
 import {
     createTaskController,
@@ -15,7 +19,9 @@ import {
     ITaskModuleConstructor
 } from "./modules/task-module/task-module"
 
-const signals: NodeJS.Signals[] = ["SIGINT", "SIGTERM"]
+const config = getAppConfig()
+
+const signals: NodeJS.Signals[] = ["SIGINT", "SIGTERM", "SIGUSR2"]
 
 const instantiateDatabase = async () => {
     const db = await createLocalDatabase()
@@ -26,14 +32,17 @@ const instantiateDatabase = async () => {
 
 const instantiateLLMAgents = async () => {
     const llmAgent = await createLocalLLMAgent()
-    llmAgent.setApiKey("SOME_TOKEN")
+    llmAgent.setApiKey("<LOCAL_API_TOKEN>")
 
-    return { llmAgent }
+    const openAIAgent = await createOpenAILLMAgent()
+    openAIAgent.setApiKey(config.OPENAI_API_KEY)
+
+    return { llmAgent, openAIAgent }
 }
 
-const instantiateModules = async ({ database, llmAgent }: ITaskModuleConstructor & ILLMModuleConstructor) => {
+const instantiateModules = async ({ database, llmAgents }: ITaskModuleConstructor & ILLMModuleConstructor) => {
     const taskModule = createTaskModule({ database })
-    const llmModule = createLLModule({ llmAgent })
+    const llmModule = createLLModule({ llmAgents })
 
     const codeModule = createCodeModule()
 
@@ -53,11 +62,11 @@ const startApp = async () => {
     const services: IServiceInstance[] = []
 
     const database = await instantiateDatabase()
-    const { llmAgent } = await instantiateLLMAgents()
+    const { llmAgent, openAIAgent } = await instantiateLLMAgents()
     services.push({ name: "database", close: database.close })
     services.push({ name: "llmAgent", close: llmAgent.close })
 
-    const appControllers = await instantiateModules({ database, llmAgent })
+    const appControllers = await instantiateModules({ database, llmAgents: [llmAgent, openAIAgent] })
         .then(modules => instantiateControllers(modules))
 
     try {
