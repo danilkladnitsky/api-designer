@@ -1,10 +1,31 @@
+import console from "console"
+
 import { APIMethod } from "shared"
 
+import { ControllerResponse } from "./controllers"
 import { IHttpHandler } from "./services"
 
 export const createHttpHandler = (handlerFn: IHttpHandler["handlerFn"]) => {
+    const wrappedFn = async (payload: any): Promise<ControllerResponse<any>> => {
+        try {
+            const result = await handlerFn(payload)
+
+            return {
+                ok: true,
+                data: result
+            }
+        }
+        catch (error) {
+            console.log(error)
+
+            return {
+                ok: false,
+                message: (error as Error).toString()
+            }
+        }
+    }
     const handlerObject: IHttpHandler = {
-        handlerFn,
+        handlerFn: wrappedFn,
         path: "",
         method: "GET"
     }

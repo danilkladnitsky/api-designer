@@ -6,10 +6,8 @@ export interface ICodeModule {
 
 export const createCodeModule = (): ICodeModule => {
     return {
-        lintCode: async (code: LintCodeDto): Promise<CodeLintResultDto> => {
-            return Promise.resolve({
-                ok: true, error: ""
-            })
+        lintCode: async (code: LintCodeDto) => {
+            return Promise.resolve({ ok: true, error: "" })
         }
     }
 }

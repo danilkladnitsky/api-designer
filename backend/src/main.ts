@@ -61,8 +61,13 @@ const instantiateControllers = async ({ taskModule, codeModule, llmModule }: ITa
 const startApp = async () => {
     const services: IServiceInstance[] = []
 
-    const database = await instantiateDatabase()
+    const database = await instantiateDatabase().catch((err) => {
+        console.error(err)
+        process.exit(1)
+    })
+
     const { llmAgent, openAIAgent } = await instantiateLLMAgents()
+
     services.push({ name: "database", close: database.close })
     services.push({ name: "llmAgent", close: llmAgent.close })
 
