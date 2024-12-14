@@ -1,6 +1,6 @@
 import path from "path"
 
-import { LLMInput, LLMOutput } from "shared"
+import { LLMInput } from "shared"
 
 import { ILLMAgentAdapter } from "../llm.adapter"
 
@@ -18,7 +18,7 @@ export const createGigachatLLMAgent = async (): Promise<ILLMAgentAdapter> => {
         setApiKey: (acessToken: string) => {
             accessToken = acessToken
         },
-        executePrompt: async (input: LLMInput): Promise<LLMOutput> => {
+        executePrompt: async (input: LLMInput[]) => {
             if (!accessToken) {
                 throw new Error("Access Token not initialized")
             }
@@ -32,20 +32,19 @@ export const createGigachatLLMAgent = async (): Promise<ILLMAgentAdapter> => {
                 },
                 body: JSON.stringify({
                     model: "GigaChat",
-                    messages: [{ role: "user", content: input.content }],
+                    messages: input,
                     stream: false,
-                    max_tokens: 256,
+                    max_tokens: 128,
                     repetition_penalty: 1,
                     update_interval: 0
                 })
             })
 
             const data = await res.json() as GigaChatResponse
-            const answer = data.choices[0].message
 
-            return {
-                content: answer.content || "no data"
-            }
+            const output = data.choices[0].message.content
+
+            return output
         }
     }
 }

@@ -6,13 +6,10 @@ export const createLocalLLMAgent = async (): Promise<ILLMAgentAdapter> => {
         close: async () => {},
         setApiKey: () => {},
         executePrompt: async (input: unknown) => {
-            return {
-                content: JSON.stringify({
-                    role: "assistant",
-                    content: "Hello World",
-                    input
-                })
-            }
+            return JSON.stringify([{
+                role: "assistant",
+                content: "Hello World"
+            }])
         }
     }
 }

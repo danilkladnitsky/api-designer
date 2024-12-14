@@ -23,9 +23,18 @@ export const createLLModule = ({ llmAgents }: ILLMModuleConstructor): ILLMModule
                 }
 
                 const response = await agent
-                    .executePrompt({ role: "user", content: PROMPTS.BUILD_CODE_GRAPH(code) })
+                    .executePrompt(PROMPTS.BUILD_CODE_GRAPH(code))
 
-                return response.content as unknown as CodeAPIGraph[]
+                try {
+                    const normalizedResponse = response.replace(/`/g, "").replace("json", "")
+
+                    console.log(normalizedResponse)
+                    return JSON.parse(normalizedResponse) as CodeAPIGraph[]
+                }
+                catch (error) {
+                    console.log(error)
+                    return []
+                }
             }
             catch (error) {
                 console.error(error)
