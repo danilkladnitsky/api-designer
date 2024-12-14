@@ -1,0 +1,28 @@
+.page {
+    height: 100%;
+
+    display: flex;
+
+    padding: 24px;
+
+    gap: 32px;
+}
+
+.codeEditorWidget {
+    height: 100%;
+    flex: 300px;
+
+    gap: 8px;
+}
+
+.tabs {
+    position: relative;
+    left: 36px;
+    top: 2px;
+}
+
+
+.taskDescriptionWidget {
+    height: 100%;
+    flex: 1;
+}
