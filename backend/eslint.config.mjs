@@ -25,8 +25,8 @@ export default [
             }
         }
     },
-    ...tsEslint.configs.recommended,
     pluginImport.flatConfigs.recommended,
+    ...tsEslint.configs.recommended,
     { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
     {
         languageOptions: {
@@ -53,6 +53,9 @@ export default [
     },
     {
         rules: {
+            "@typescript-eslint/no-unused-vars": "off",
+            "@typescript-eslint/no-explicit-any": "off",
+            "no-unused-vars": "off",
             "import/order": [
                 "error",
                 {
