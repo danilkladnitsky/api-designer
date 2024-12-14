@@ -9,7 +9,7 @@ export const PROMPTS = {
             endpoint: string,
             method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
         }
-        Send the response in JSON format without any additional text
+        Send the response in JSON format without any additional text. Only the JSON.
         `
     }
 }

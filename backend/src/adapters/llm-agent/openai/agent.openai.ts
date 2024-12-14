@@ -21,7 +21,8 @@ export const createOpenAILLMAgent = async (): Promise<ILLMAgentAdapter> => {
 
             const chatCompletion = await client.chat.completions.create({
                 messages: [{ role: input.role, content: input.content }],
-                model: "gpt-3.5-turbo"
+                model: "gpt-4o-mini",
+                max_tokens: 50
             })
 
             return {

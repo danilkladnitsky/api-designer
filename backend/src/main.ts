@@ -4,8 +4,8 @@ import { startHttpServer } from "@/app/http/server"
 import { IServiceInstance } from "@/common/services"
 
 import { createLocalDatabase } from "./adapters/database/local/database.local"
+import { createGigachatLLMAgent } from "./adapters/llm-agent/gigachat/gigachat.agent"
 import { createLocalLLMAgent } from "./adapters/llm-agent/local/agent.local"
-import { createOpenAILLMAgent } from "./adapters/llm-agent/openai/agent.openai"
 import { getAppConfig } from "./app/config"
 import { createCodeController, ICodeController } from "./controllers/code.controller"
 import {
@@ -34,10 +34,10 @@ const instantiateLLMAgents = async () => {
     const llmAgent = await createLocalLLMAgent()
     llmAgent.setApiKey("<LOCAL_API_TOKEN>")
 
-    const openAIAgent = await createOpenAILLMAgent()
-    openAIAgent.setApiKey(config.OPENAI_API_KEY)
+    const gigaChatAgent = await createGigachatLLMAgent()
+    gigaChatAgent.setApiKey(config.GIGACHAT_ACCESS_TOKEN)
 
-    return { llmAgent, openAIAgent }
+    return { llmAgent, gigaChatAgent }
 }
 
 const instantiateModules = async ({ database, llmAgents }: ITaskModuleConstructor & ILLMModuleConstructor) => {
@@ -66,12 +66,12 @@ const startApp = async () => {
         process.exit(1)
     })
 
-    const { llmAgent, openAIAgent } = await instantiateLLMAgents()
+    const { llmAgent, gigaChatAgent } = await instantiateLLMAgents()
 
     services.push({ name: "database", close: database.close })
     services.push({ name: "llmAgent", close: llmAgent.close })
 
-    const appControllers = await instantiateModules({ database, llmAgents: [llmAgent, openAIAgent] })
+    const appControllers = await instantiateModules({ database, llmAgents: [llmAgent, gigaChatAgent] })
         .then(modules => instantiateControllers(modules))
 
     try {
