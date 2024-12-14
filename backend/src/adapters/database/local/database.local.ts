@@ -3,8 +3,19 @@ import { ID } from "shared"
 import { EntityList, IDatabaseAdapter } from "../database.adapter"
 
 export const createLocalDatabase = async (): Promise<IDatabaseAdapter> => {
-    const memory: Record<EntityList, any> = {
-        task: []
+    const memory: Record<EntityList, any[]> = {
+        task: [
+            {
+                id: "1",
+                name: "task 1",
+                description: "description 1",
+                code: { content: "print('hello')", createdAt: new Date().toString() },
+                answer: { answer: { 1: "hello" } },
+                createdAt: new Date().toString(),
+                updatedAt: new Date().toString()
+
+            }
+        ]
     }
 
     return {
@@ -43,7 +54,7 @@ export const createLocalDatabase = async (): Promise<IDatabaseAdapter> => {
         ) => {
             memory[entityName] = memory[entityName].filter(
                 (entity: { id: ID }) => entity.id !== id
-            ) as TOperationResult
+            )
         }
     }
 }

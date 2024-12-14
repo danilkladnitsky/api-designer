@@ -6,6 +6,7 @@ export const ServiceNames = {
 } as const
 
 export interface IHttpPayload<TBody = unknown> {
+    params: Record<string, string>
     body: TBody
 }
 
