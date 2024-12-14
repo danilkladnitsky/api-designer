@@ -2,12 +2,14 @@ import { startHttpServer } from "@/app/http/server"
 import { IServiceInstance } from "@/common/services"
 
 import { createLocalDatabase } from "./adapters/database/local/database.local"
+import { createLocalLLMAgent } from "./adapters/llm-agent/local/agent.local"
 import { createCodeController, ICodeController } from "./controllers/code.controller"
 import {
     createTaskController,
     ITaskController
 } from "./controllers/task.controller"
 import { createCodeModule } from "./modules/code-module/code-module"
+import { createLLModule, ILLMModuleConstructor } from "./modules/llm-module/llm-module"
 import {
     createTaskModule,
     ITaskModuleConstructor
@@ -22,16 +24,25 @@ const instantiateDatabase = async () => {
     return db
 }
 
-const instantiateModules = async ({ database }: ITaskModuleConstructor) => {
-    const taskModule = createTaskModule({ database })
-    const codeModule = createCodeModule()
+const instantiateLLMAgents = async () => {
+    const llmAgent = await createLocalLLMAgent()
+    llmAgent.setApiKey("SOME_TOKEN")
 
-    return { taskModule, codeModule }
+    return { llmAgent }
 }
 
-const instantiateControllers = async ({ taskModule, codeModule }: ITaskController & ICodeController) => {
+const instantiateModules = async ({ database, llmAgent }: ITaskModuleConstructor & ILLMModuleConstructor) => {
+    const taskModule = createTaskModule({ database })
+    const llmModule = createLLModule({ llmAgent })
+
+    const codeModule = createCodeModule()
+
+    return { taskModule, codeModule, llmModule }
+}
+
+const instantiateControllers = async ({ taskModule, codeModule, llmModule }: ITaskController & ICodeController) => {
     const taskController = createTaskController({ taskModule })
-    const codeController = createCodeController({ codeModule })
+    const codeController = createCodeController({ codeModule, llmModule })
 
     return {
         httpHandlers: [...taskController.httpHandlers, ...codeController.httpHandlers]
@@ -42,16 +53,17 @@ const startApp = async () => {
     const services: IServiceInstance[] = []
 
     const database = await instantiateDatabase()
+    const { llmAgent } = await instantiateLLMAgents()
     services.push({ name: "database", close: database.close })
+    services.push({ name: "llmAgent", close: llmAgent.close })
 
-    const { httpHandlers } = await instantiateModules({ database }).then(
-        modules => instantiateControllers(modules)
-    )
+    const appControllers = await instantiateModules({ database, llmAgent })
+        .then(modules => instantiateControllers(modules))
 
     try {
         const httpServer = startHttpServer({
             port: 3000,
-            handlers: httpHandlers
+            handlers: appControllers.httpHandlers
         })
 
         services.push(httpServer)

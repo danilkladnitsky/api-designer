@@ -1,6 +1,6 @@
-import { ITaskModule } from "@/modules/task-module/task-module"
-import { createHttpHandler } from "@/common/utils"
 import { IControllerConstructor } from "@/common/controllers"
+import { createHttpHandler } from "@/common/utils"
+import { ITaskModule } from "@/modules/task-module/task-module"
 
 export interface ITaskController {
     taskModule: ITaskModule
@@ -14,7 +14,7 @@ export const createTaskController = ({
     }
 
     const httpHandlers = [
-        createHttpHandler(getTasks).setPath("/tasks").setMethod("get").build()
+        createHttpHandler(getTasks).setPath("/tasks").setMethod("GET").build()
     ]
 
     return { httpHandlers }

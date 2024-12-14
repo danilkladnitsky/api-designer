@@ -1,3 +1,5 @@
+import { APIMethod } from "shared"
+
 export const ServiceNames = {
     HTTP: "http service",
     WEBSOCKET: "websocket service"
@@ -14,7 +16,7 @@ export interface IHandler<TPayload = unknown> {
 
 export interface IHttpHandler {
     path: string
-    method: "get" | "post"
+    method: APIMethod
     handlerFn: (payload: any) => Promise<any>
 }
 
@@ -25,5 +27,5 @@ export interface IHttpServerConstructor {
 
 export interface IServiceInstance {
     name: string
-    close(): Promise<void>
+    close(): Promise<any>
 }

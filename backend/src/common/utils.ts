@@ -1,10 +1,12 @@
+import { APIMethod } from "shared"
+
 import { IHttpHandler } from "./services"
 
 export const createHttpHandler = (handlerFn: IHttpHandler["handlerFn"]) => {
     const handlerObject: IHttpHandler = {
         handlerFn,
         path: "",
-        method: "get"
+        method: "GET"
     }
 
     const createScope = () => {
@@ -13,8 +15,8 @@ export const createHttpHandler = (handlerFn: IHttpHandler["handlerFn"]) => {
             return createScope()
         }
 
-        const setMethod = (method: "get" | "post") => {
-            handlerObject.method = method
+        const setMethod = (method: APIMethod) => {
+            handlerObject.method = method.toLocaleLowerCase() as APIMethod
             return createScope()
         }
 
