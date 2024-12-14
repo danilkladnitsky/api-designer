@@ -30,12 +30,3 @@ export interface IServiceInstance {
     name: string
     close(): Promise<any>
 }
-
-export type ServiceResponse<TData> = {
-    ok: true
-    data: TData
-} | {
-    ok: false
-    message: string
-    error?: string
-}

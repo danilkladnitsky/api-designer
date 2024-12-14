@@ -8,10 +8,8 @@ import tsEslint from "typescript-eslint"
 /** @type {import('eslint').Linter.Config[]} */
 export default [
     {
-        globals: {
-            "NodeJS": true
-        },
         settings: {
+
             "react": {
                 version: "detect"
             },
@@ -36,8 +34,7 @@ export default [
         languageOptions: {
             sourceType: "module",
             globals: {
-                ...globals.browser,
-                ...globals.node,
+                ...globals.node
             }
         }
     },
@@ -57,6 +54,7 @@ export default [
     },
     {
         rules: {
+            "eol-last": "error",
             "@typescript-eslint/no-unused-vars": "off",
             "@typescript-eslint/no-explicit-any": "off",
             "no-unused-vars": "off",
