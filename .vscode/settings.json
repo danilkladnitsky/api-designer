@@ -2,6 +2,12 @@
   // css
   "css.lint.unknownAtRules": "ignore",
   "scss.lint.unknownAtRules": "ignore",
+  "css.validate": false,
+  "less.validate": false,
+  "scss.validate": false,
+
+  "stylelint.validate": ["css", "scss"],
+  "stylelint.configBasedir": "frontend",
 
   // eslint
   "eslint.enable": true,
@@ -19,7 +25,8 @@
     "source.fixAll.ts": "always",
     "source.organizeImports": "always",
     "source.sortImports": "always",
-    "source.removeUnusedImports": "always"
+    "source.removeUnusedImports": "always",
+    "source.fixAll.stylelint": "explicit"
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
@@ -30,5 +37,5 @@
   },
   "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  }
+  },
 }

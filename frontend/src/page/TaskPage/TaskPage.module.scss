@@ -1,28 +1,24 @@
 .page {
-    height: 100%;
-
     display: flex;
-
-    padding: 24px;
-
     gap: 32px;
+    height: 100%;
+    padding: 24px;
 }
 
 .codeEditorWidget {
-    height: 100%;
     flex: 300px;
-
     gap: 8px;
+    height: 100%;
 }
 
 .tabs {
-    position: relative;
     left: 36px;
+    position: relative;
     top: 2px;
 }
 
 
 .taskDescriptionWidget {
-    height: 100%;
     flex: 1;
+    height: 100%;
 }

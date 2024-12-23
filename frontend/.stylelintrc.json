@@ -1,0 +1,3 @@
+{
+  "extends": ["stylelint-config-recommended", "stylelint-config-standard-scss", "@shopify/stylelint-plugin", "stylelint-config-alphabetical-order"]
+}
