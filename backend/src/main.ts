@@ -6,6 +6,7 @@ import { IServiceInstance } from "@/common/services"
 import { createLocalDatabase } from "./adapters/database/local/database.local"
 import { createGigachatLLMAgent } from "./adapters/llm-agent/gigachat/gigachat.agent"
 import { createLocalLLMAgent } from "./adapters/llm-agent/local/agent.local"
+import { createRedisHosted } from "./adapters/redis/hosted/redis.hosted"
 import { getAppConfig } from "./app/config"
 import { createCodeController, ICodeController } from "./controllers/code.controller"
 import {
@@ -28,6 +29,14 @@ const instantiateDatabase = async () => {
     await db.connect()
 
     return db
+}
+
+const instantiateRedis = async () => {
+    const redis = await createRedisHosted()
+
+    await redis.connect({ host: config.REDIS_HOST, port: config.REDIS_PORT, password: config.REDIS_PASSWORD })
+
+    return redis
 }
 
 const instantiateLLMAgents = async () => {
@@ -66,10 +75,15 @@ const startApp = async () => {
         process.exit(1)
     })
 
+    const redis = await instantiateRedis().catch((err) => {
+        console.error(err)
+        process.exit(1)
+    })
+
     const { llmAgent, gigaChatAgent } = await instantiateLLMAgents()
 
     services.push({ name: "database", close: database.close })
-    services.push({ name: "llmAgent", close: llmAgent.close })
+    services.push({ name: "redis", close: redis.close })
 
     const appControllers = await instantiateModules({ database, llmAgents: [llmAgent, gigaChatAgent] })
         .then(modules => instantiateControllers(modules))
