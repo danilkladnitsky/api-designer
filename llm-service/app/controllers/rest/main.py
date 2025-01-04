@@ -1,6 +1,5 @@
+from app.controllers.rest.routes import llm, utils
 from fastapi import APIRouter
-
-from app.api.routes import llm, utils
 
 api_router = APIRouter()
 api_router.include_router(utils.router)
