@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: 
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./api-gateway:/usr/src/app
+      - ./shared-types:/usr/src/shared-types
+  
+  llm-service:
+    build: 
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./llm-service:/src

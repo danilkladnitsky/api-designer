@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    environment:
+      - API_GATEWAY_PORT=${API_GATEWAY_PORT}
+      - LLM_SERVICE_PORT=${LLM_SERVICE_PORT}
+      - NGINX_PORT=${NGINX_PORT}
+    networks:
+      - app-network
+    depends_on:
+      - api-gateway
+      - llm-service
+
+  redis:
+    image: redis:latest
+    container_name: redis-broker
+    ports:
+      - ${REDIS_PORT}
+    volumes:
+      - redis-data:/data
+    environment:
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - app-network
+  
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: ./api-gateway
+    ports: 
+      - ${API_GATEWAY_PORT}
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_CHANNEL=${REDIS_CHANNEL}
+      - PORT=${API_GATEWAY_PORT}
+      - HOST=${API_GATEWAY_HOST}
+    networks:
+      - app-network
+  
+  llm-service:
+    container_name: llm-service
+    build:
+      context: ./llm-service
+    ports:
+      - ${LLM_SERVICE_PORT}
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_CHANNEL=${REDIS_CHANNEL}
+      - PORT=${LLM_SERVICE_PORT}
+    networks:
+      - app-network
+
+volumes:
+  redis-data:
+   
+networks:
+  app-network:
+    driver: bridge

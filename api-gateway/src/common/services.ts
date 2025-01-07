@@ -23,6 +23,7 @@ export interface IHttpHandler {
 
 export interface IHttpServerConstructor {
     port: number
+    host: string
     handlers: IHttpHandler[]
 }
 

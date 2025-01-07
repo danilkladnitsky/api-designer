@@ -9,6 +9,7 @@ import { createLocalLLMAgent } from "./adapters/llm-agent/local/agent.local"
 import { createRedisHosted } from "./adapters/redis/hosted/redis.hosted"
 import { getAppConfig } from "./app/config"
 import { createCodeController, ICodeController } from "./controllers/code.controller"
+import { createHealthcheckkController } from "./controllers/healthcheck.controller"
 import {
     createTaskController,
     ITaskController
@@ -34,6 +35,7 @@ const instantiateDatabase = async () => {
 const instantiateRedis = async () => {
     const redis = await createRedisHosted()
 
+    console.log(config.REDIS_HOST, config.REDIS_PORT, config.REDIS_PASSWORD)
     await redis.connect({ host: config.REDIS_HOST, port: config.REDIS_PORT, password: config.REDIS_PASSWORD })
 
     return redis
@@ -61,9 +63,10 @@ const instantiateModules = async ({ database, llmAgents }: ITaskModuleConstructo
 const instantiateControllers = async ({ taskModule, codeModule, llmModule }: ITaskController & ICodeController) => {
     const taskController = createTaskController({ taskModule })
     const codeController = createCodeController({ codeModule, llmModule })
+    const healthCheckController = createHealthcheckkController()
 
     return {
-        httpHandlers: [...taskController.httpHandlers, ...codeController.httpHandlers]
+        httpHandlers: [...taskController.httpHandlers, ...codeController.httpHandlers, ...healthCheckController.httpHandlers]
     }
 }
 
@@ -74,23 +77,23 @@ const startApp = async () => {
         console.error(err)
         process.exit(1)
     })
+    services.push({ name: "database", close: database.close })
 
     const redis = await instantiateRedis().catch((err) => {
         console.error(err)
         process.exit(1)
     })
+    services.push({ name: "redis", close: redis.close })
 
     const { llmAgent, gigaChatAgent } = await instantiateLLMAgents()
-
-    services.push({ name: "database", close: database.close })
-    services.push({ name: "redis", close: redis.close })
 
     const appControllers = await instantiateModules({ database, llmAgents: [llmAgent, gigaChatAgent] })
         .then(modules => instantiateControllers(modules))
 
     try {
         const httpServer = startHttpServer({
-            port: 3000,
+            port: config.PORT,
+            host: config.HOST,
             handlers: appControllers.httpHandlers
         })
 

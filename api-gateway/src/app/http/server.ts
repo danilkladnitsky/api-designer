@@ -4,6 +4,7 @@ import { IHttpServerConstructor, IServiceInstance, ServiceNames } from "@/common
 
 export const startHttpServer = ({
     port: PORT = 3000,
+    host: HOST = "0.0.0.0",
     handlers
 }: IHttpServerConstructor): IServiceInstance => {
     const server = Fastify({
@@ -16,10 +17,7 @@ export const startHttpServer = ({
     })
 
     server
-        .get("/ping", async function handler() {
-            return "pong"
-        })
-        .listen({ port: PORT }, function (err, address) {
+        .listen({ port: PORT, host: HOST }, function (err, address) {
             if (err) {
                 server.log.error(err)
                 process.exit(1)

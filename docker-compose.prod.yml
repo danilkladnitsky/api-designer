@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  redis:
+    container_name: redis-broker
+  
+  api-gateway:
+    container_name: api-gateway
+    build: 
+      dockerfile: ./backend/Dockerfile
+  
+  llm-service:
+    container_name: llm-service
