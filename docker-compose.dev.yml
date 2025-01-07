@@ -1,12 +1,21 @@
 version: '3.8'
 
 services:
+  redis:
+    entrypoint: ["echo", "Service foo disabled"]
+
   api-gateway:
     build: 
       dockerfile: Dockerfile.dev
     volumes:
       - ./api-gateway:/usr/src/app
       - ./shared-types:/usr/src/shared-types
+    environment:
+      - REDIS_HOST=redis.api-designer.kladnitsky.ru
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - PORT=${API_GATEWAY_PORT}
+      - HOST=${API_GATEWAY_HOST}
   
   llm-service:
     build: 
