@@ -1,6 +1,5 @@
-import { APIMethod } from "shared"
+import { APIMethod, ControllerResponse } from "shared/index"
 
-import { ControllerResponse } from "./controllers"
 import { BrokerChannels, IHttpHandler, IRedisHandler } from "./services"
 
 export const createRedisSubscribeHandlers = ({

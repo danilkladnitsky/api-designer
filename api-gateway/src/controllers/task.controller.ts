@@ -1,4 +1,4 @@
-import { ID } from "shared"
+import { ID } from "shared/index"
 
 import { IControllerConstructor } from "@/common/controllers"
 import { IHttpPayload } from "@/common/services"

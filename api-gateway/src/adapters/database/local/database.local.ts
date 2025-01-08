@@ -1,4 +1,4 @@
-import { ID } from "shared"
+import { ID } from "shared/index"
 
 import { EntityList, IDatabaseAdapter } from "../database.adapter"
 

@@ -89,13 +89,14 @@ const startApp = async () => {
         .then(modules => instantiateControllers({ ...modules, ws }))
 
     try {
-        const httpServer = startHttpServer({
-            port: config.PORT,
-            host: config.HOST,
-            handlers: appControllers.httpHandlers
-        })
-
-        const redisBroker = startRedisBroker({ redis, subscribers: appControllers.redisSubscribers })
+        const [httpServer, redisBroker] = await Promise.all([
+            startHttpServer({
+                port: config.PORT,
+                host: config.HOST,
+                handlers: appControllers.httpHandlers
+            }),
+            startRedisBroker({ redis, subscribers: appControllers.redisSubscribers })
+        ])
 
         services.push(redisBroker)
         services.push(httpServer)

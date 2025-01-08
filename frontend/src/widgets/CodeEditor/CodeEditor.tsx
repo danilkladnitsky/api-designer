@@ -6,28 +6,25 @@ import { cn } from "@/utils/cn"
 
 import styles from "./CodeEditor.module.scss"
 
+
+
 interface Props {
     className?: string
+    currentCode?: string
+    onChange?: (value: string) => void
 }
 
-const DEFAULT_CODE = `
-from fastapi import FastAPI
+export const CodeEditor = ({ className, currentCode, onChange }: Props) => {
+    const handleOnChange = (value?: string) => {
+        onChange?.(value || "")
+    }
 
-app = FastAPI()
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-`
-
-export const CodeEditor = ({ className }: Props) => {
     return (
         <Box className={cn(styles.editor, className)}>
             <Box className={styles.editorWrapper}>
                 <Editor
                     loading={<LoadingScreen />}
-                    defaultValue={DEFAULT_CODE}
+                    defaultValue={currentCode}
                     className={styles.editorFrame}
                     height="100%"
 
@@ -42,6 +39,7 @@ export const CodeEditor = ({ className }: Props) => {
                     language="python"
                     defaultLanguage="python"
                     theme="vs-dark"
+                    onChange={handleOnChange}
                 />
             </Box>
             <Box className={styles.panel}>

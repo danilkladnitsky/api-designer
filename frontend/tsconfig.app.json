@@ -21,10 +21,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "shared/*": ["../../shared-types/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "test", "../shared-types/"],
+  "exclude": ["node_modules", "dist", "coverage"],
 }

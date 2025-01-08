@@ -1,4 +1,4 @@
-import { ID } from "shared"
+import { ID } from "shared/index"
 
 import { IDatabaseAdapter } from "@/adapters/database/database.adapter"
 import { Task } from "@/domain/tasks"

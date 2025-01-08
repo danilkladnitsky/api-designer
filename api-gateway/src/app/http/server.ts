@@ -1,14 +1,16 @@
+import cors from "@fastify/cors"
 import Fastify from "fastify"
 
 import { IHttpServerConstructor, IServiceInstance, ServiceNames } from "@/common/services"
 
-export const startHttpServer = ({
+export const startHttpServer = async ({
     port: PORT = 3000,
     host: HOST = "0.0.0.0",
     handlers
-}: IHttpServerConstructor): IServiceInstance => {
+}: IHttpServerConstructor): Promise<IServiceInstance> => {
     const server = Fastify({
         logger: true
+
     })
 
     handlers.forEach(({ path, method, handlerFn }) => {
@@ -17,6 +19,9 @@ export const startHttpServer = ({
     })
 
     server
+        .register(cors, {
+            origin: true
+        })
         .listen({ port: PORT, host: HOST }, function (err, address) {
             if (err) {
                 server.log.error(err)

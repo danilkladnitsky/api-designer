@@ -1,4 +1,4 @@
-import { APIMethod } from "shared"
+import { APIMethod, WsEvents } from "shared/index"
 
 import { IRedisAdapter } from "@/adapters/redis/redis.adapter"
 
@@ -55,13 +55,6 @@ export const BROKER_CHANNELS = {
     GENERATE_CODE_GRAPH: "code/request/generate-graph",
     GET_GENERATED_CODE_GRAPH: "code/response/generate-graph"
 } as const
-
-// WS
-export const WS_EVENTS = {
-    UPDATE_BUILD_CODE_GRAPH: "update-build-code-graph"
-} as const
-
-export type WsEvents = (typeof WS_EVENTS)[keyof typeof WS_EVENTS]
 
 export interface IWsPayload<TBody = unknown> {
     event: WsEvents

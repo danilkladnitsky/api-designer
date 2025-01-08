@@ -15,7 +15,7 @@
     "types": ["node"],
     "paths": {
       "@/*": ["./*"],
-      "shared": ["../../shared-types"]
+      "shared/*": ["../../shared-types/*"]
     }
   },
   "include": ["src", "test", "../shared-types/"],

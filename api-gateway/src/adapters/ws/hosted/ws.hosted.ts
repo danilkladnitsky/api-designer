@@ -3,7 +3,10 @@ import { Server } from "socket.io"
 import { IWsAdapter, WsConfig } from "../ws.adapter"
 
 export const createWsHostedAdapter = ({ port }: WsConfig): IWsAdapter => {
-    const wsServer = new Server()
+    const wsServer = new Server({
+        cors: {
+            origin: "*"
+        } })
     wsServer.listen(port)
 
     console.log(port)

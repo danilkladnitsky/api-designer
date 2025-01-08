@@ -1,6 +1,4 @@
-import { LLMInput } from "shared"
-
-import { Code } from "@/domain/code"
+import { LLMInput } from "shared/index"
 
 const FEW_SHOT_QUESTION_1 = `
 @app.get("/")
@@ -29,7 +27,7 @@ const FEW_SHOT_ANSWER_2 = `
 `
 
 export const PROMPTS = {
-    BUILD_CODE_GRAPH: (code: Code): string => {
+    BUILD_CODE_GRAPH: (code: string): string => {
         const fewShots: LLMInput[] = [
             {
                 content: `Ты парсер кода из Python в JSON. Найди все вызовы API и сконвертируй их в формат:
@@ -61,7 +59,7 @@ export const PROMPTS = {
                     Верни только JSON
 
                 Ответь сразу и без комментариев.
-                ${code.content}`
+                ${code}`
         }
 
         return [...fewShots, question].reduce((acc, cur) => {

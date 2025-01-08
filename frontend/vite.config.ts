@@ -5,7 +5,8 @@ export default defineConfig({
     plugins: [react()],
     resolve: {
         alias: {
-            "@": "/src"
+            "@": "/src",
+            "shared": "../../../shared-types"
         }
     },
     css: {
