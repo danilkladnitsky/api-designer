@@ -1,9 +1,20 @@
-import console from "console"
-
 import { APIMethod } from "shared"
 
 import { ControllerResponse } from "./controllers"
-import { IHttpHandler } from "./services"
+import { BrokerChannels, IHttpHandler, IRedisHandler } from "./services"
+
+export const createRedisSubscribeHandlers = ({
+    handlerFn,
+    channel
+}: {
+    handlerFn: IRedisHandler["handlerFn"]
+    channel: BrokerChannels
+}): IRedisHandler => {
+    return {
+        channel,
+        handlerFn
+    }
+}
 
 export const createHttpHandler = (handlerFn: IHttpHandler["handlerFn"]) => {
     const wrappedFn = async (payload: any): Promise<ControllerResponse<any>> => {

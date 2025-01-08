@@ -1,11 +1,9 @@
-from typing import List
-
 from pydantic import BaseModel
 
 
 class LLMRequest(BaseModel):
-    prompt: List[str]
-    user_input: str
+    context: str
+    input: str
 
 
 class LLMResponse(BaseModel):

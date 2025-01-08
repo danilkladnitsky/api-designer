@@ -1,7 +1,8 @@
-import { IHttpHandler } from "./services"
+import { IHttpHandler, IRedisHandler } from "./services"
 
 export interface IControllerConstructor {
     httpHandlers: IHttpHandler[]
+    redisHandlers?: IRedisHandler[]
 }
 
 export type ControllerResponse<TData> = {

@@ -8,6 +8,7 @@ import { createGigachatLLMAgent } from "./adapters/llm-agent/gigachat/gigachat.a
 import { createLocalLLMAgent } from "./adapters/llm-agent/local/agent.local"
 import { createRedisHosted } from "./adapters/redis/hosted/redis.hosted"
 import { getAppConfig } from "./app/config"
+import { startRedisBroker } from "./app/redis/broker"
 import { createCodeController, ICodeController } from "./controllers/code.controller"
 import { createHealthcheckkController } from "./controllers/healthcheck.controller"
 import {
@@ -35,7 +36,6 @@ const instantiateDatabase = async () => {
 const instantiateRedis = async () => {
     const redis = await createRedisHosted()
 
-    console.log(config.REDIS_HOST, config.REDIS_PORT, config.REDIS_PASSWORD)
     await redis.connect({ host: config.REDIS_HOST, port: config.REDIS_PORT, password: config.REDIS_PASSWORD })
 
     return redis
@@ -51,10 +51,9 @@ const instantiateLLMAgents = async () => {
     return { llmAgent, gigaChatAgent }
 }
 
-const instantiateModules = async ({ database, llmAgents }: ITaskModuleConstructor & ILLMModuleConstructor) => {
+const instantiateModules = async ({ database, llmAgents, redis }: ITaskModuleConstructor & ILLMModuleConstructor) => {
     const taskModule = createTaskModule({ database })
-    const llmModule = createLLModule({ llmAgents })
-
+    const llmModule = createLLModule({ llmAgents, redis })
     const codeModule = createCodeModule()
 
     return { taskModule, codeModule, llmModule }
@@ -66,6 +65,7 @@ const instantiateControllers = async ({ taskModule, codeModule, llmModule }: ITa
     const healthCheckController = createHealthcheckkController()
 
     return {
+        redisSubscribers: [...codeController.redisHandlers!],
         httpHandlers: [...taskController.httpHandlers, ...codeController.httpHandlers, ...healthCheckController.httpHandlers]
     }
 }
@@ -83,11 +83,10 @@ const startApp = async () => {
         console.error(err)
         process.exit(1)
     })
-    services.push({ name: "redis", close: redis.close })
 
     const { llmAgent, gigaChatAgent } = await instantiateLLMAgents()
 
-    const appControllers = await instantiateModules({ database, llmAgents: [llmAgent, gigaChatAgent] })
+    const appControllers = await instantiateModules({ database, llmAgents: [llmAgent, gigaChatAgent], redis })
         .then(modules => instantiateControllers(modules))
 
     try {
@@ -97,6 +96,9 @@ const startApp = async () => {
             handlers: appControllers.httpHandlers
         })
 
+        const redisBroker = startRedisBroker({ redis, subscribers: appControllers.redisSubscribers })
+
+        services.push(redisBroker)
         services.push(httpServer)
         addGracefulShutdown(services)
     }

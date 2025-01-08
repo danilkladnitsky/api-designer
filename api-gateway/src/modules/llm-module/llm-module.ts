@@ -1,45 +1,28 @@
-import { CodeAPIGraph } from "shared"
-
 import { ILLMAgentAdapter } from "@/adapters/llm-agent/llm.adapter"
+import { IRedisAdapter } from "@/adapters/redis/redis.adapter"
+import { BROKER_CHANNELS } from "@/common/services"
 
-import { BuildGraphCodeDto } from "./llm-module.dto"
-import { PROMPTS } from "./llm-module.prompts"
+import { BuildGraphCodeDto, BuildGraphCodeEvent } from "./llm-module.dto"
 
 export interface ILLMModule {
-    buildCodeGraph: (code: BuildGraphCodeDto) => Promise<CodeAPIGraph[]>
+    buildCodeGraph: (code: BuildGraphCodeDto) => Promise<void>
 }
 
 export interface ILLMModuleConstructor {
     llmAgents: ILLMAgentAdapter[]
+    redis: IRedisAdapter
 }
 
-export const createLLModule = ({ llmAgents }: ILLMModuleConstructor): ILLMModule => {
+export const createLLModule = ({ llmAgents, redis }: ILLMModuleConstructor): ILLMModule => {
     return {
-        buildCodeGraph: async ({ code, llm }: BuildGraphCodeDto) => {
-            try {
-                const agent = llm ? llmAgents.find(a => a.name === llm) : llmAgents[0]
-                if (!agent) {
-                    throw new Error("No LLM agent found")
-                }
-
-                const response = await agent
-                    .executePrompt(PROMPTS.BUILD_CODE_GRAPH(code))
-
-                try {
-                    const normalizedResponse = response.replace(/`/g, "").replace("json", "")
-
-                    console.log(normalizedResponse)
-                    return JSON.parse(normalizedResponse) as CodeAPIGraph[]
-                }
-                catch (error) {
-                    console.log(error)
-                    return []
-                }
+        buildCodeGraph: async ({ code }: BuildGraphCodeDto) => {
+            const payload: BuildGraphCodeEvent = {
+                context: "find bugs",
+                input: code.content
             }
-            catch (error) {
-                console.error(error)
-                throw new Error((error as Error).message)
-            }
+
+            redis.publish(BROKER_CHANNELS.GENERATE_CODE_GRAPH, {
+                data: payload, targetChannel: BROKER_CHANNELS.GET_GENERATED_CODE_GRAPH })
         }
     }
 }

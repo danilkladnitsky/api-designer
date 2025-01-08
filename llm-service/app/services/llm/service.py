@@ -27,7 +27,12 @@ class LLMService:
         )
 
     def get_response(self, requestDTO: LLMRequest) -> LLMResponse:
-        llm_response = self.conversation.run(requestDTO.prompt)
+        context = requestDTO["context"]
+        input = requestDTO["input"]
+
+        full_input = f"{context}\n\n{input}" if context else input
+
+        llm_response = self.conversation.run({"input": full_input})
         return LLMResponse(response=llm_response)
 
 

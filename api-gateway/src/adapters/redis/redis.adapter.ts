@@ -1,4 +1,4 @@
-import { IServiceInstance } from "@/common/services"
+import { IBrokerPayload, IServiceInstance } from "@/common/services"
 
 export type RedisConfig = {
     host: string
@@ -25,7 +25,7 @@ export interface IRedisAdapter extends IServiceInstance {
    * @param message - The message to be published.
    * @returns A promise that resolves when the message is published.
    */
-    publish(channel: string, message: string): Promise<void>
+    publish<TPayload>(channel: string, payload: IBrokerPayload<TPayload>): Promise<void>
 
     /**
    * Subscribes to a specific channel and listens for messages.

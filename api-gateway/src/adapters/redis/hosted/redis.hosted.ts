@@ -26,12 +26,12 @@ export const createRedisHosted = async (): Promise<IRedisAdapter> => {
             console.log("Connected to Redis.")
         },
 
-        publish: async (channel: string, message: string) => {
+        publish: async (channel: string, message) => {
             if (!client) {
                 throw new Error("Redis client not initialized")
             }
 
-            await client.publish(channel, message)
+            await client.publish(channel, JSON.stringify(message))
             console.log(`Message published to ${channel}: ${message}`)
         },
 
@@ -43,7 +43,8 @@ export const createRedisHosted = async (): Promise<IRedisAdapter> => {
             await subscriber.subscribe(channel)
             subscriber.on("message", (receivedChannel, message) => {
                 if (receivedChannel === channel) {
-                    callback(message)
+                    console.log(message)
+                    callback(JSON.parse(message))
                 }
             })
             console.log(`Subscribed to channel: ${channel}`)
