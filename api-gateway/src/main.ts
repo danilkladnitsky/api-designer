@@ -4,9 +4,8 @@ import { startHttpServer } from "@/app/http/server"
 import { IServiceInstance } from "@/common/services"
 
 import { createLocalDatabase } from "./adapters/database/local/database.local"
-import { createGigachatLLMAgent } from "./adapters/llm-agent/gigachat/gigachat.agent"
-import { createLocalLLMAgent } from "./adapters/llm-agent/local/agent.local"
 import { createRedisHosted } from "./adapters/redis/hosted/redis.hosted"
+import { createWsHostedAdapter } from "./adapters/ws/hosted/ws.hosted"
 import { getAppConfig } from "./app/config"
 import { startRedisBroker } from "./app/redis/broker"
 import { createCodeController, ICodeController } from "./controllers/code.controller"
@@ -41,27 +40,23 @@ const instantiateRedis = async () => {
     return redis
 }
 
-const instantiateLLMAgents = async () => {
-    const llmAgent = await createLocalLLMAgent()
-    llmAgent.setApiKey("<LOCAL_API_TOKEN>")
+const instantiateWs = async () => {
+    const ws = await createWsHostedAdapter({ port: config.WS_PORT })
 
-    const gigaChatAgent = await createGigachatLLMAgent()
-    gigaChatAgent.setApiKey(config.GIGACHAT_ACCESS_TOKEN)
-
-    return { llmAgent, gigaChatAgent }
+    return ws
 }
 
-const instantiateModules = async ({ database, llmAgents, redis }: ITaskModuleConstructor & ILLMModuleConstructor) => {
+const instantiateModules = async ({ database, redis }: ITaskModuleConstructor & ILLMModuleConstructor) => {
     const taskModule = createTaskModule({ database })
-    const llmModule = createLLModule({ llmAgents, redis })
+    const llmModule = createLLModule({ redis })
     const codeModule = createCodeModule()
 
     return { taskModule, codeModule, llmModule }
 }
 
-const instantiateControllers = async ({ taskModule, codeModule, llmModule }: ITaskController & ICodeController) => {
+const instantiateControllers = async ({ taskModule, codeModule, llmModule, ws }: ITaskController & ICodeController) => {
     const taskController = createTaskController({ taskModule })
-    const codeController = createCodeController({ codeModule, llmModule })
+    const codeController = createCodeController({ codeModule, llmModule, ws })
     const healthCheckController = createHealthcheckkController()
 
     return {
@@ -84,10 +79,14 @@ const startApp = async () => {
         process.exit(1)
     })
 
-    const { llmAgent, gigaChatAgent } = await instantiateLLMAgents()
+    const ws = await instantiateWs().catch((err) => {
+        console.error(err)
+        process.exit(1)
+    })
+    services.push({ name: "websocket", close: ws.close })
 
-    const appControllers = await instantiateModules({ database, llmAgents: [llmAgent, gigaChatAgent], redis })
-        .then(modules => instantiateControllers(modules))
+    const appControllers = await instantiateModules({ database, redis })
+        .then(modules => instantiateControllers({ ...modules, ws }))
 
     try {
         const httpServer = startHttpServer({

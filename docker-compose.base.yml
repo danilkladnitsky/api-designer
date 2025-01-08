@@ -37,6 +37,7 @@ services:
       context: ./api-gateway
     ports: 
       - ${API_GATEWAY_PORT}
+      - ${WS_PORT}
     depends_on:
       - redis
     environment:
@@ -45,6 +46,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - PORT=${API_GATEWAY_PORT}
       - HOST=${API_GATEWAY_HOST}
+      - WS_PORT=${WS_PORT}
     networks:
       - app-network
   

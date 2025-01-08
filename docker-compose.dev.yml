@@ -10,6 +10,8 @@ services:
     volumes:
       - ./api-gateway:/usr/src/app
       - ./shared-types:/usr/src/shared-types
+    ports:
+      - "8080:8080"
   
   llm-service:
     build: 

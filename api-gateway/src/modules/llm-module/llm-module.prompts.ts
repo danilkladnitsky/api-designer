@@ -29,7 +29,7 @@ const FEW_SHOT_ANSWER_2 = `
 `
 
 export const PROMPTS = {
-    BUILD_CODE_GRAPH: (code: Code): LLMInput[] => {
+    BUILD_CODE_GRAPH: (code: Code): string => {
         const fewShots: LLMInput[] = [
             {
                 content: `Ты парсер кода из Python в JSON. Найди все вызовы API и сконвертируй их в формат:
@@ -51,21 +51,21 @@ export const PROMPTS = {
                 role: "assistant"
             }
         ]
-        const question = `
+        const question = {
+            content: `
                 Выведи все API - функции в виде массива в формате
                 {
                     endpoint: string,
                     method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
                 }
                     Верни только JSON
-                ${code.content}`
 
-        return [
-            ...fewShots,
-            {
-                content: question,
-                role: "user"
-            }
-        ]
+                Ответь сразу и без комментариев.
+                ${code.content}`
+        }
+
+        return [...fewShots, question].reduce((acc, cur) => {
+            return `${acc}\n${cur.content}`
+        }, "")
     }
 }

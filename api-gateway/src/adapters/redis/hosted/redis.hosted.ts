@@ -32,7 +32,7 @@ export const createRedisHosted = async (): Promise<IRedisAdapter> => {
             }
 
             await client.publish(channel, JSON.stringify(message))
-            console.log(`Message published to ${channel}: ${message}`)
+            console.info(`Message published to ${channel}: ${message}`)
         },
 
         subscribe: async (channel: string, callback: (message: string) => void) => {
@@ -43,7 +43,6 @@ export const createRedisHosted = async (): Promise<IRedisAdapter> => {
             await subscriber.subscribe(channel)
             subscriber.on("message", (receivedChannel, message) => {
                 if (receivedChannel === channel) {
-                    console.log(message)
                     callback(JSON.parse(message))
                 }
             })
