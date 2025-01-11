@@ -1,0 +1,22 @@
+.action {
+    align-items: center;
+    background-color: $primary-background;
+    border: 1px solid #3E3E40;
+    border-radius: 8px;
+
+    display: flex;
+    height: 20px;
+    justify-content: center;
+
+
+    position: absolute;
+    right: -8px;
+    top: -8px;
+
+     transition: all 0.2s ease-in-out;
+    width: 20px;
+
+    &:hover {
+        border: 1px solid $request-color;
+    }
+}

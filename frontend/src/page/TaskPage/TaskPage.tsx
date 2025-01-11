@@ -2,6 +2,7 @@ import { Box, Tabs } from "@gravity-ui/uikit"
 import { useState } from "react"
 
 import { updateCodeGraph } from "@/api"
+import { throttle } from "@/ui/hooks/throttle"
 import { CodeEditor } from "@/widgets/CodeEditor/CodeEditor"
 import { TaskDescription } from "@/widgets/TaskDescription/TaskDescription"
 
@@ -27,12 +28,14 @@ async def root():
     return {"message": "Hello World"}
 `
 
+const [throttledCodeGraph] = throttle(updateCodeGraph, 2000)
+
 export const TaskPage = () => {
     const [userCode, setUserCode] = useState(DEFAULT_CODE)
 
     const onUserCodeType = (updatedCode: string) => {
         setUserCode(updatedCode)
-        updateCodeGraph(updatedCode)
+        throttledCodeGraph(updatedCode)
     }
     return (
         <Box className={styles.page}>

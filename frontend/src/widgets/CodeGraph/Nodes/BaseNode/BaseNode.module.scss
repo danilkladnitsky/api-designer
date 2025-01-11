@@ -1,0 +1,57 @@
+.baseNode {
+    align-items: center;
+
+    
+    border-radius: 4px;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    padding: 8px 12px;
+}
+
+.nodeTitleWrapper {
+    padding: 16px 0;
+}
+
+.nodeTitle {
+    background-color: #26272A;
+
+    border: 1px solid #3E3E40;
+    border-radius: 12px;
+    padding: 12px;
+    position: relative;
+
+   
+}
+
+.nodeContent {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nodeIconWrapper {
+    position: relative;
+}
+
+
+.nodeIconLoading {
+    opacity: 0.05;
+}
+
+.nodeLoading {
+    left: 4px;
+    position: absolute;
+    top: 4px;
+}
+
+.nodeHeaderSkeleton {
+    height: 24px;
+    width: 120px;
+}
+
+.nodeDescriptionSkeleton {
+    height: 16px;
+    width: 120px;
+}
+
