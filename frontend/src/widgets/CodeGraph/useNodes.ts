@@ -4,9 +4,13 @@ import { CodeGraphEdge, CodeGraphNode } from "@/types/code-graph"
 
 import { createLayout } from "./utils/createLayout"
 
-interface Props {
+export interface UseNodesProps {
     nodes: CodeGraphNode[]
     edges: CodeGraphEdge[]
+    setNodes: (nodes: CodeGraphNode[]) => void
+    setEdges: (edges: CodeGraphEdge[]) => void
+    onNodesChange: (nodes: CodeGraphNode) => void
+    onEdgesChange: (edges: CodeGraphEdge) => void
 }
 
 export const useNodes = (props: Props) => {

@@ -12,7 +12,7 @@ export const createLayout = (nodes: CodeGraphNode[], edges: CodeGraphEdge[], dir
     const isHorizontal = direction === "LR"
     dagreGraph.setGraph({ rankdir: direction })
 
-    nodes.forEach((node) => {
+    nodes.filter(node => node.type !== "taskNode").forEach((node) => {
         dagreGraph.setNode(node.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
     })
 
@@ -29,10 +29,12 @@ export const createLayout = (nodes: CodeGraphNode[], edges: CodeGraphEdge[], dir
             targetPosition: isHorizontal ? "left" : "top",
             sourcePosition: isHorizontal ? "right" : "bottom",
             // draggable: false,
-            position: {
-                x: nodeWithPosition.x - (node.originalWidth || NODE_WIDTH) / 2 + 10,
-                y: nodeWithPosition.y - NODE_HEIGHT / 2
-            }
+            position: node.type !== "taskNode"
+                ? {
+                        x: nodeWithPosition.x - (node.originalWidth || NODE_WIDTH) / 2 + 10,
+                        y: nodeWithPosition.y - NODE_HEIGHT / 2
+                    }
+                : node.position
         }
 
         return newNode

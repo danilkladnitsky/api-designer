@@ -60,7 +60,7 @@ export const DEFAULT_NODES: CodeGraphNode[] = [
             name: "Port Policy"
         },
         id: "5",
-        type: "firewallNode",
+        type: "routerNode",
         parentId: "0",
         extent: "parent",
         draggable: false,

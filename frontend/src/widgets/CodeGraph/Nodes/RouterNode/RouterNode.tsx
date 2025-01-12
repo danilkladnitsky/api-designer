@@ -9,7 +9,7 @@ const OpenFirewallAction = () => {
     return <Icon data={PencilToSquare} size={8} />
 }
 
-export const FirewallNode = ({ data }: CodeGraphNodeProps) => {
+export const RouterNode = ({ data }: CodeGraphNodeProps) => {
     return (
         <BaseNode hasSource actionComponent={<OpenFirewallAction />} icon={BranchesRightArrowRight} {...data} />
     )

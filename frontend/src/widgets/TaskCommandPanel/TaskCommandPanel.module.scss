@@ -1,0 +1,28 @@
+
+
+.taskCommandPanelWrapper {
+    align-items: center;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+
+    padding: 24px; 
+    width: 100%;
+}
+
+.taskCommandPanel {
+    background-color: $tertiary-background;
+    border-radius: 8px;
+
+    display: flex;
+    gap: 8px;
+    padding: 16px;
+}
+
+.taskCommandPanelButton {
+    align-items: center;
+    height: 64px;
+    width: 64px !important;
+}

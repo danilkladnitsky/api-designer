@@ -7,19 +7,16 @@ import "@gravity-ui/uikit/styles/styles.css"
 import "@/ui/styles/theme.scss"
 
 import { AppLayout } from "@/layout/AppLayout/AppLayout"
+import { TaskPage } from "@/page/TaskPage/TaskPage"
 import "@/ui/styles/index.scss"
-import { CodeGraph } from "@/widgets/CodeGraph/CodeGraph"
 import { Header } from "@/widgets/Header/Header"
-import { useSocket } from "@/ws/useSocket"
 
 export const App = () => {
-    useSocket()
     return (
         <ThemeProvider theme="dark">
             <AppLayout>
                 <Header />
-                <CodeGraph />
-                {/* <TaskPage /> */}
+                <TaskPage />
             </AppLayout>
         </ThemeProvider>
     )

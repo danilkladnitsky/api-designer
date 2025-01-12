@@ -13,6 +13,16 @@ const OpenCodeAction = () => {
 
 export const ServiceNode = ({ data }: CodeGraphNodeProps) => {
     return (
-        <BaseNode actionComponent={<OpenCodeAction />} className={styles.node} icon={Server} hasTarget hasSource {...data} />
+        <BaseNode
+            actionComponent={<OpenCodeAction />}
+            classNames={{
+                wrapper: styles.node,
+                title: styles.title
+            }}
+            icon={Server}
+            hasTarget
+            hasSource
+            {...data}
+        />
     )
 }

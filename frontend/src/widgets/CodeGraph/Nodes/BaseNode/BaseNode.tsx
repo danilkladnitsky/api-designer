@@ -13,21 +13,24 @@ interface Props {
     hasSource?: boolean
     hasTarget?: boolean
     description?: string
-    className?: string
+    classNames?: {
+        wrapper?: string
+        title?: string
+    }
     loading?: boolean
     icon?: IconProps["data"]
     actionComponent?: ReactNode
     hintComponent?: ReactNode
 }
 
-export const BaseNode = ({ name, description, hasSource, hasTarget, className, icon, actionComponent, loading }: Props) => {
+export const BaseNode = ({ name, description, hasSource, hasTarget, classNames, icon, actionComponent, loading }: Props) => {
     return (
-        <Box className={cn(styles.baseNode, className)}>
+        <Box className={cn(styles.baseNode, classNames?.wrapper)}>
 
             <Box className={styles.nodeTitleWrapper}>
                 {hasTarget && <Handle type="target" position={Position.Left} />}
 
-                <Box className={styles.nodeTitle}>
+                <Box className={cn(styles.nodeTitle, classNames?.title)}>
                     <NodeAction actionComponent={actionComponent} />
                     {icon && (
                         <Box className={styles.nodeIconWrapper}>
@@ -52,7 +55,7 @@ export const BaseNode = ({ name, description, hasSource, hasTarget, className, i
                     )
                 : (
                         <Box className={styles.nodeContent}>
-                            <Text variant="header-1" className={styles.nodeHeader}>
+                            <Text variant="subheader-1" className={styles.nodeHeader}>
                                 {name}
                             </Text>
                             <Text variant="caption-2" color="secondary">
