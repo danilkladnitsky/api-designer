@@ -41,3 +41,10 @@ export interface TaskConfig {
     clients: TaskClient[]
     services: TaskService[]
 }
+
+export interface TaskConfigInProcess {
+    container: TaskContainer | null
+    router: TaskRouter | null
+    clients: TaskClient[]
+    services: TaskService[]
+}

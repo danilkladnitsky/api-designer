@@ -7,11 +7,16 @@
     display: block;
 }
 
+.wrapper {
+    height: 100%;
+}
+
 .codeEditor {
     display: flex;
     flex: 1;
     flex-direction: column;
     gap: 16px;
+    height: calc(100% - 36px);
     padding-top: 16px;
 }
 

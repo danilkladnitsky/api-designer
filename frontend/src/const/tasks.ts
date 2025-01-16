@@ -1,4 +1,4 @@
-import { TaskConfig } from "shared/task"
+import { TaskConfig, TaskConfigInProcess } from "shared/task"
 
 export const SAMPLE_TASK_CONFIG: TaskConfig = {
     id: "sample",
@@ -20,6 +20,22 @@ export const SAMPLE_TASK_CONFIG: TaskConfig = {
         id: "sample-frontend",
         name: "Web Frontend"
     }],
+    services: [{
+        id: "sample-service",
+        name: "FastApi service",
+        type: "fastapi",
+        endpoints: [{
+            id: "sample-endpoint",
+            url: "/hello-world",
+            method: "GET"
+        }]
+    }]
+}
+
+export const ONLY_ENDPOINTS_CONFIG: TaskConfigInProcess = {
+    clients: [],
+    container: null,
+    router: null,
     services: [{
         id: "sample-service",
         name: "FastApi service",

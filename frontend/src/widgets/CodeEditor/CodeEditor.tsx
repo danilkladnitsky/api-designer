@@ -1,13 +1,9 @@
 import { Play } from "@gravity-ui/icons"
-import { Box, Button, Icon, Tabs, Text } from "@gravity-ui/uikit"
+import { Box, Button, Icon, Tabs } from "@gravity-ui/uikit"
 import { Editor } from "@monaco-editor/react"
 
-import { SAMPLE_TASK_CONFIG } from "@/const/tasks"
 import { LoadingScreen } from "@/ui/components/LoadingScreen/LoadingScreen"
-import { Modal } from "@/ui/components/Modal/Modal"
-import { convertTaskConfigToCodeGraph } from "@/utils/convertTaskConfigToCodeGraph"
-
-import { CodeGraph } from "../CodeGraph/CodeGraph"
+import { cn } from "@/utils/cn"
 
 import styles from "./CodeEditor.module.scss"
 
@@ -17,14 +13,13 @@ interface Props {
     onChange?: (value: string) => void
 }
 
-export const CodeEditor = ({ className, currentCode, onChange }: Props) => {
-    const [nodes, edges] = convertTaskConfigToCodeGraph(SAMPLE_TASK_CONFIG)
+export const CodeEditor = ({ currentCode, onChange, className }: Props) => {
     const handleOnChange = (value?: string) => {
         onChange?.(value || "")
     }
 
     return (
-        <Modal title="Редактор">
+        <Box className={cn(styles.wrapper, className)}>
             <Tabs
                 className={styles.tabs}
 
@@ -65,8 +60,6 @@ export const CodeEditor = ({ className, currentCode, onChange }: Props) => {
                     theme="vs-dark"
                     onChange={handleOnChange}
                 />
-                <Text className={styles.tabName} variant="body-2">Архитектура сервиса</Text>
-                <CodeGraph className={styles.graphFrame} edges={edges} nodes={nodes} />
                 <Box className={styles.action}>
                     <Button size="xl">
                         Запустить
@@ -75,6 +68,6 @@ export const CodeEditor = ({ className, currentCode, onChange }: Props) => {
 
                 </Box>
             </Box>
-        </Modal>
+        </Box>
     )
 }

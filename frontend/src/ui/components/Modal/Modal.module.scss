@@ -8,13 +8,29 @@
     position: relative;
 }
 
+.minifiedModal {
+    max-height: fit-content;
+}
+
 .title {
     display: block;
+}
+
+.header {
+    align-items: center;
+    display: flex;
+    gap: 6px;
     margin-bottom: 16px;
 }
 
+.minifiedHeader {
+    margin-bottom: 0;
+}
+
 .content {
-    display: flex;
-    flex: 1 1;
-    flex-direction: column;
+    height: 100%;
+}
+
+.minifiedContent {
+    display: none;
 }

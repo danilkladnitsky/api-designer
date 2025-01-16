@@ -9,31 +9,34 @@
     display: flex;
     gap: 16px;
     height: calc(100vh - 60px);
-    justify-content: space-between;
     left: 0;
-    padding: 8px 24px;
+    padding: 16px;
     position: absolute;
     top: 0;
     width: 100%;
 }
 
-.codeEditorWidget {
+.column {
+    display: flex;
     flex: 1;
+    flex-flow: column;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 16px;
     height: 100%;
-    max-height: calc(100% - 32px);
 }
 
 .taskDescriptionWidget {
+    flex: 400px 0;
     height: 100%;
-    max-height: calc(100% - 32px);
-    max-width: 500px;
     overflow-y: auto;
-    width: fit-content;
 }
 
-.commandPanel {
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    width: 100%;
+.codeGraphWidget {
+    flex: 1 1 auto;
 }
+
+.codeEditorWidget {
+    flex: 0 1 auto;
+}
+
