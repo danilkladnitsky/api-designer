@@ -1,7 +1,22 @@
-$primary-background: #1F2226;
-$secondary-background: #26272A;
-$tertiary-background: #252526;
-$primary-text: #FEFEFF;
-$secondary-text: #828282;
-$brand-color: var(--g-color-base-brand);
-$request-color: #2DD941;
+// Colors
+$white-color: #FBFFFFff;
+$malachite-color: #2DD745ff;
+$blue-crayola-color: #307CFFff;
+$raisin-black-color: #26282Cff;
+$eerie-black-color: #1B1B1Bff;
+$eerie-black-2-color: #1F2326ff;
+$onyx-color: #3C3F45ff;
+$jet-2-color: #313334ff;
+$moby-blue-color: #1D63ED;
+
+// Common color
+$primary-text: $white-color;
+$secondary-text: #9D9EA2;
+$brand-color: $blue-crayola-color;
+$primary-background: $raisin-black-color;
+$secondary-background: $eerie-black-color;
+$tertiary-background: $eerie-black-2-color;
+$border-color: $jet-2-color;
+$hover-color: $onyx-color;
+$request-color: $malachite-color;
+$docker-color: $moby-blue-color;

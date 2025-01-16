@@ -1,18 +1,12 @@
 .taskDescription {
-    background-color: #242627;
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    padding: 20px;
-    position: relative;
+    
 }
 
 .taskDescriptionText {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    line-height: 24px;
 }
 
 .taskDescriptionCloseButton {

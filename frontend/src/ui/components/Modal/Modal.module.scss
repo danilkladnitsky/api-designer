@@ -1,0 +1,20 @@
+.modal {
+    background-color: $primary-background;
+    border-color: $border-color;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    position: relative;
+}
+
+.title {
+    display: block;
+    margin-bottom: 16px;
+}
+
+.content {
+    display: flex;
+    flex: 1 1;
+    flex-direction: column;
+}

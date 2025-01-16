@@ -1,4 +1,4 @@
-import { Box, Select, SelectOption, Text, UserLabel } from "@gravity-ui/uikit"
+import { Box, Select, SelectOption, Text } from "@gravity-ui/uikit"
 
 import styles from "./Header.module.scss"
 
@@ -16,7 +16,7 @@ export const Header = () => {
                 <Text variant="header-1">api designer</Text>
                 <Select value={["ping"]} options={TASK_OPTIONS} />
             </Box>
-            <UserLabel size="s">Danil Kladnitsky</UserLabel>
+
         </Box>
     )
 }

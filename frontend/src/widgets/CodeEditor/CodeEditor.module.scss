@@ -1,24 +1,39 @@
-.editor {
-    background-color: $primary-background;
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    height: 100%;
-
-    padding: 16px;
-    width: 100%;
-}
-
 .tabs {
     z-index: 1;
 }
 
-.editorWrapper {
-    border: 1px solid darkslategray;
-    border-radius: 8px;
+.tabName {
+    color: $secondary-text;
+    display: block;
+}
+
+.codeEditor {
+    display: flex;
     flex: 1;
-    margin-top: 12px;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 16px;
+}
+
+.editorFrame {
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    flex: 1 1;
+    height: 100%;
     overflow: hidden;
-    position: relative;
-}   
+}
+
+
+.graphFrame {
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.action {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+    height: fit-content;
+    justify-content: flex-end;
+}

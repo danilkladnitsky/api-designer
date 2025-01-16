@@ -14,9 +14,9 @@
 }
 
 .nodeTitle {
-    background-color: #26272A;
+    background-color: $primary-background;
 
-    border: 1px solid #3E3E40;
+    border: 1px solid $border-color;
     border-radius: 12px;
     padding: 12px;
     position: relative;

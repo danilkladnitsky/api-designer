@@ -6,20 +6,9 @@ import { SAMPLE_TASK_CONFIG } from "@/const/tasks"
 import { throttle } from "@/ui/hooks/throttle"
 import { convertTaskConfigToCodeGraph } from "@/utils/convertTaskConfigToCodeGraph"
 import { CodeEditor } from "@/widgets/CodeEditor/CodeEditor"
-import { CodeGraph } from "@/widgets/CodeGraph/CodeGraph"
-import { TaskCommandPanel } from "@/widgets/TaskCommandPanel/TaskCommandPanel"
 import { TaskDescription } from "@/widgets/TaskDescription/TaskDescription"
 
 import styles from "./TaskPage.module.scss"
-
-const TABS = [{
-    id: "1",
-    title: "Код"
-},
-{
-    id: "2",
-    title: "Архитектура"
-}]
 
 const DEFAULT_CODE = `
 from fastapi import FastAPI
@@ -44,14 +33,13 @@ export const TaskPage = () => {
     }
     return (
         <Box className={styles.page}>
-            <CodeGraph edges={edges} nodes={nodes} />
-            <TaskDescription className={styles.taskDescriptionWidget} />
-            <Box className={styles.codeEditorWidget}>
-                <CodeEditor currentCode={userCode} onChange={onUserCodeType} />
+            <Box className={styles.codeEditorWidgetWrapper}>
+                <TaskDescription className={styles.taskDescriptionWidget} />
+                <Box className={styles.codeEditorWidget}>
+                    <CodeEditor currentCode={userCode} onChange={onUserCodeType} />
+                </Box>
             </Box>
-            <Box className={styles.commandPanel}>
-                <TaskCommandPanel />
-            </Box>
+
         </Box>
     )
 }

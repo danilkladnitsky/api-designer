@@ -1,9 +1,13 @@
-import { Box, Tabs, Text } from "@gravity-ui/uikit"
+import { Play } from "@gravity-ui/icons"
+import { Box, Button, Icon, Tabs, Text } from "@gravity-ui/uikit"
 import { Editor } from "@monaco-editor/react"
 
-import { CloseButton } from "@/ui/components/CloseButton/CloseButton"
+import { SAMPLE_TASK_CONFIG } from "@/const/tasks"
 import { LoadingScreen } from "@/ui/components/LoadingScreen/LoadingScreen"
-import { cn } from "@/utils/cn"
+import { Modal } from "@/ui/components/Modal/Modal"
+import { convertTaskConfigToCodeGraph } from "@/utils/convertTaskConfigToCodeGraph"
+
+import { CodeGraph } from "../CodeGraph/CodeGraph"
 
 import styles from "./CodeEditor.module.scss"
 
@@ -14,16 +18,16 @@ interface Props {
 }
 
 export const CodeEditor = ({ className, currentCode, onChange }: Props) => {
+    const [nodes, edges] = convertTaskConfigToCodeGraph(SAMPLE_TASK_CONFIG)
     const handleOnChange = (value?: string) => {
         onChange?.(value || "")
     }
 
     return (
-        <Box className={cn(styles.editor, className)}>
-            <CloseButton />
-            <Text variant="subheader-3">Редактор</Text>
+        <Modal title="Редактор">
             <Tabs
                 className={styles.tabs}
+
                 size="m"
                 activeTab="1"
                 items={[{
@@ -39,14 +43,12 @@ export const CodeEditor = ({ className, currentCode, onChange }: Props) => {
                     title: "nginx.conf"
                 }]}
             />
-            <Box className={styles.editorWrapper}>
+            <Box className={styles.codeEditor}>
                 <Editor
-
                     loading={<LoadingScreen />}
                     defaultValue={currentCode}
                     className={styles.editorFrame}
                     height="100%"
-
                     options={{
                         scrollbar: {
                             useShadows: false
@@ -63,8 +65,16 @@ export const CodeEditor = ({ className, currentCode, onChange }: Props) => {
                     theme="vs-dark"
                     onChange={handleOnChange}
                 />
-            </Box>
+                <Text className={styles.tabName} variant="body-2">Архитектура сервиса</Text>
+                <CodeGraph className={styles.graphFrame} edges={edges} nodes={nodes} />
+                <Box className={styles.action}>
+                    <Button size="xl">
+                        Запустить
+                        <Icon size={18} data={Play} />
+                    </Button>
 
-        </Box>
+                </Box>
+            </Box>
+        </Modal>
     )
 }

@@ -1,26 +1,33 @@
 .page {
+    background-color: $secondary-background;
     height: 100%;
     position: relative;
 }
 
-.codeEditorWidget {
-    height: 600px;
-    max-height: calc(100% - 32px);
-    max-width: 600px;
+.codeEditorWidgetWrapper {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+    height: calc(100vh - 60px);
+    justify-content: space-between;
+    left: 0;
+    padding: 8px 24px;
     position: absolute;
-    right: 16px;
-    top: 16px;
-    width: 100%
+    top: 0;
+    width: 100%;
+}
+
+.codeEditorWidget {
+    flex: 1;
+    height: 100%;
+    max-height: calc(100% - 32px);
 }
 
 .taskDescriptionWidget {
-    left: 16px;
+    height: 100%;
     max-height: calc(100% - 32px);
-    max-width: 400px;
-    min-height: 400px;
+    max-width: 500px;
     overflow-y: auto;
-    position: absolute;
-    top: 16px;
     width: fit-content;
 }
 

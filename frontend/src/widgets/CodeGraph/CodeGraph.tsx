@@ -3,6 +3,8 @@ import { Background, ReactFlow } from "@xyflow/react"
 
 import "@xyflow/react/dist/style.css"
 
+import { cn } from "@/utils/cn"
+
 import styles from "./CodeGraph.module.scss"
 import { CodeGraphContextProvider, ICodeGraphContextProviderProps, useCodeGraphContext } from "./context/CodeGraph.context"
 import { RequestEdge } from "./Edges/RequestEdge/RequestEdge"
@@ -27,9 +29,9 @@ const edgeTypes = {
 }
 
 const CodeGraphContent = () => {
-    const { edges, nodes, onEdgesChange, onNodesChange } = useCodeGraphContext()
+    const { edges, nodes, className, onEdgesChange, onNodesChange } = useCodeGraphContext()
     return (
-        <Box className={styles.codeGraph}>
+        <Box className={cn(styles.codeGraph, className)}>
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
