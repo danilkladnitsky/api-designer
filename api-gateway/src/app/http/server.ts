@@ -20,7 +20,7 @@ export const startHttpServer = async ({
 
     server
         .register(cors, {
-            origin: true
+            origin: "*"
         })
         .listen({ port: PORT, host: HOST }, function (err, address) {
             if (err) {

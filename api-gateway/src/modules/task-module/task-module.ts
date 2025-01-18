@@ -1,7 +1,7 @@
 import { ID } from "shared/index"
+import { Task } from "shared/task"
 
 import { IDatabaseAdapter } from "@/adapters/database/database.adapter"
-import { Task } from "@/domain/tasks"
 
 import { CreateTaskDto } from "./task-module.dto"
 

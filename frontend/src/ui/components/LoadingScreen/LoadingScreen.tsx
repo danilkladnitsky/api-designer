@@ -1,9 +1,13 @@
-import { Box, Loader } from "@gravity-ui/uikit"
+import { Box, Loader, LoaderProps } from "@gravity-ui/uikit"
 
-export const LoadingScreen = () => {
+interface Props extends LoaderProps {
+    className?: string
+}
+
+export const LoadingScreen = ({ className, ...loaderProps }: Props) => {
     return (
-        <Box>
-            <Loader size="l" />
+        <Box className={className}>
+            <Loader size="l" {...loaderProps} />
         </Box>
     )
 }

@@ -63,7 +63,7 @@ export const convertTaskConfigToCodeGraph = (taskConfig: TaskConfig): [CodeGraph
             type: "requestEdge"
         })
 
-        service.endpoints.forEach((endpoint) => {
+        service.endpoints?.forEach((endpoint) => {
             edges.push({
                 id: `${serviceId}-${endpoint.id}`,
                 source: serviceId,
@@ -157,7 +157,7 @@ export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigInPr
             })
         }
 
-        service.endpoints.forEach((endpoint) => {
+        service.endpoints?.forEach((endpoint) => {
             edges.push({
                 id: `${serviceId}-${endpoint.id}`,
                 source: serviceId,

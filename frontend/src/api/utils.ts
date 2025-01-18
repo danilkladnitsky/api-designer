@@ -2,7 +2,7 @@ import { APIMethod, ControllerResponse } from "../../../shared-types"
 
 const API_URL = "http://localhost:80/api-gateway"
 
-export const sendRequest = async <TBody>(url: string, method: APIMethod, body: TBody) => {
+export const sendRequest = async <TBody>(url: string, method: APIMethod, body?: TBody) => {
     try {
         const response = await fetch(`${API_URL}${url}`, {
             method,

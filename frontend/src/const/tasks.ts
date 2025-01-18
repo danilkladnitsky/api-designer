@@ -32,18 +32,9 @@ export const SAMPLE_TASK_CONFIG: TaskConfig = {
     }]
 }
 
-export const ONLY_ENDPOINTS_CONFIG: TaskConfigInProcess = {
+export const EMPTY_CONFIG: TaskConfigInProcess = {
     clients: [],
     container: null,
     router: null,
-    services: [{
-        id: "sample-service",
-        name: "FastApi service",
-        type: "fastapi",
-        endpoints: [{
-            id: "sample-endpoint",
-            url: "/hello-world",
-            method: "GET"
-        }]
-    }]
+    services: []
 }

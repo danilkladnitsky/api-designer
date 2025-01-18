@@ -9,8 +9,36 @@ export const createLocalDatabase = async (): Promise<IDatabaseAdapter> => {
                 id: "1",
                 name: "task 1",
                 description: "description 1",
-                code: { content: "print('hello')", createdAt: new Date().toString() },
-                answer: { answer: { 1: "hello" } },
+                userSolution: {
+                    clients: [],
+                    services: [{
+                        id: "sample-service",
+                        name: "FastApi service",
+                        type: "fastapi",
+                        endpoints: [{
+                            id: "sample-endpoint",
+                            url: "/hello-world",
+                            method: "GET"
+                        }]
+                    }],
+                    container: null,
+                    router: null
+                },
+                answer: {
+                    clients: [],
+                    services: [{
+                        id: "sample-service",
+                        name: "FastApi service",
+                        type: "fastapi",
+                        endpoints: [{
+                            id: "sample-endpoint",
+                            url: "/hello-world",
+                            method: "GET"
+                        }]
+                    }],
+                    container: null,
+                    router: null
+                },
                 createdAt: new Date().toString(),
                 updatedAt: new Date().toString()
 
@@ -27,7 +55,6 @@ export const createLocalDatabase = async (): Promise<IDatabaseAdapter> => {
             return `local db closed at ${new Date().toDateString()}`
         },
         getEntities: async <TDatabaseEntity = any>(entityName: EntityList) => {
-            console.log(entityName)
             return memory[entityName] as TDatabaseEntity
         },
         saveEntity: async <TDatabaseEntity = any, TOperationResult = any>(

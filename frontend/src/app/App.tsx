@@ -11,13 +11,18 @@ import { TaskPage } from "@/page/TaskPage/TaskPage"
 import "@/ui/styles/index.scss"
 import { Header } from "@/widgets/Header/Header"
 
+import { AppContextProvider } from "./App.context"
+
 export const App = () => {
     return (
         <ThemeProvider theme="dark">
-            <AppLayout>
-                <Header />
-                <TaskPage />
-            </AppLayout>
+            <AppContextProvider>
+                <AppLayout>
+                    <Header />
+                    <TaskPage taskId="1" />
+                </AppLayout>
+            </AppContextProvider>
+
         </ThemeProvider>
     )
 }

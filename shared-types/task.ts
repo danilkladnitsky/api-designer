@@ -1,3 +1,5 @@
+import { ID, Timestamp } from "."
+
 export type TaskRouter = {
     id: string
     name: string
@@ -19,7 +21,7 @@ export type TaskService = {
     id: string
     name: string
     type: 'fastapi' | 'flask'
-    endpoints: TaskEndpoint[]
+    endpoints?: TaskEndpoint[]
 }
 
 export type TaskContainer = {
@@ -47,4 +49,17 @@ export interface TaskConfigInProcess {
     router: TaskRouter | null
     clients: TaskClient[]
     services: TaskService[]
+}
+
+export interface TaskConfigSolution extends TaskConfigInProcess {
+}
+
+export interface Task {
+    id: ID
+    name: string
+    description: string
+    userSolution: TaskConfigInProcess | null
+    answer: TaskConfigSolution
+    createdAt: Timestamp
+    updatedAt: Timestamp
 }

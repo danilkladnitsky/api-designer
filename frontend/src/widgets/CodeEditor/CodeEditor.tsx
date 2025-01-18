@@ -1,47 +1,35 @@
 import { Play } from "@gravity-ui/icons"
-import { Box, Button, Icon, Tabs } from "@gravity-ui/uikit"
+import { Box, Button, Icon } from "@gravity-ui/uikit"
 import { Editor } from "@monaco-editor/react"
 
 import { LoadingScreen } from "@/ui/components/LoadingScreen/LoadingScreen"
 import { cn } from "@/utils/cn"
 
+import { CodeEditorContextProvider, ICodeEditorContextProviderProps, useCodeEditorContext } from "./CodeEditor.context"
 import styles from "./CodeEditor.module.scss"
 
-interface Props {
+interface CodeEditorContentProps {
     className?: string
-    currentCode?: string
-    onChange?: (value: string) => void
 }
 
-export const CodeEditor = ({ currentCode, onChange, className }: Props) => {
-    const handleOnChange = (value?: string) => {
-        onChange?.(value || "")
+const CodeEditorContent = ({ className }: CodeEditorContentProps) => {
+    const { code, setCode } = useCodeEditorContext()
+
+    const handleCodeChange = (value?: string) => {
+        if (value) {
+            setCode(value)
+        }
+        else {
+            setCode("")
+        }
     }
 
     return (
         <Box className={cn(styles.wrapper, className)}>
-            <Tabs
-                className={styles.tabs}
-
-                size="m"
-                activeTab="1"
-                items={[{
-                    id: "1",
-                    title: "routes.py"
-                },
-                {
-                    id: "2",
-                    title: "docker-compose.yml"
-                },
-                {
-                    id: "3",
-                    title: "nginx.conf"
-                }]}
-            />
             <Box className={styles.codeEditor}>
                 <Editor
                     loading={<LoadingScreen />}
-                    defaultValue={currentCode}
+                    defaultValue={code}
                     className={styles.editorFrame}
                     height="100%"
                     options={{
@@ -58,16 +46,24 @@ export const CodeEditor = ({ currentCode, onChange, className }: Props) => {
                     language="python"
                     defaultLanguage="python"
                     theme="vs-dark"
-                    onChange={handleOnChange}
+                    onChange={handleCodeChange}
                 />
                 <Box className={styles.action}>
                     <Button size="xl">
-                        Запустить
+                        Проверить
                         <Icon size={18} data={Play} />
                     </Button>
 
                 </Box>
             </Box>
         </Box>
+    )
+}
+
+export const CodeEditor = ({ currentCode, fileName, onFileCodeChange, ...contentProps }: CodeEditorContentProps & ICodeEditorContextProviderProps) => {
+    return (
+        <CodeEditorContextProvider onFileCodeChange={onFileCodeChange} fileName={fileName} currentCode={currentCode}>
+            <CodeEditorContent {...contentProps} />
+        </CodeEditorContextProvider>
     )
 }
