@@ -1,12 +1,18 @@
 import { createContext, ReactNode, useContext, useState } from "react"
 import { Code, ID } from "shared/index"
-import { Task, TaskConfig } from "shared/task"
+import { Task, TaskFile } from "shared/task"
 
 import { getTaskById } from "@/api"
 
 interface IAppContext {
-    userCode: Record<string, Code>
+    userCode: Record<ID, {
+        code: Code
+        language: string
+    }>
     task: Task | null
+    taskFiles: TaskFile[]
+    currentFile: TaskFile | null
+    setCurrentFile: (file: TaskFile) => void
     setUserCode: (fileName: string, code: Code) => void
     loadTaskById?: (id: ID) => void
 }
@@ -26,23 +32,50 @@ const AppContext = createContext({} as IAppContext)
 export const useAppContext = (): IAppContext => useContext(AppContext)
 
 export const AppContextProvider = ({ children }: { children: ReactNode }) => {
-    const [task, setTask] = useState<TaskConfig | null>(null)
-    const [userCode, setUserCode] = useState<IAppContext["userCode"]>({ "main.py": DEFAULT_CODE })
+    const [task, setTask] = useState<Task | null>(null)
+    const [taskFiles, setTaskFiles] = useState<TaskFile[]>([])
+    const [currentFile, setCurrentFile] = useState<TaskFile | null>(null)
+    const [userCode, setUserCode] = useState<IAppContext["userCode"] | null>(null)
 
     const handleUserCodeChange = (fileName: string, code: Code) => {
-        setUserCode(v => ({ ...v, [fileName]: code }))
+        setUserCode((prev) => {
+            return {
+                ...prev,
+                [fileName]: {
+                    code,
+                    language: prev[fileName].language
+                }
+            }
+        })
     }
 
     const loadTaskById = async (id: ID) => {
-        const taskConfig = await getTaskById(id)
+        const task = await getTaskById(id)
 
-        if (taskConfig) {
-            setTask(taskConfig)
+        if (!task) {
+            return
         }
+
+        setTask(task)
+        setTaskFiles(task.files)
+
+        const normalizedFiles = taskFiles.reduce((acc, file) => {
+            return {
+                ...acc,
+                [file.fileName]: {
+                    code: file.content,
+                    language: file.language
+                }
+            }
+        }, {})
+
+        setCurrentFile(task.files[0])
+
+        setUserCode(normalizedFiles)
     }
 
     return (
-        <AppContext.Provider value={{ setUserCode: handleUserCodeChange, loadTaskById, userCode, task }}>
+        <AppContext.Provider value={{ setUserCode: handleUserCodeChange, loadTaskById, setCurrentFile, userCode, task, taskFiles, currentFile }}>
             {children}
         </AppContext.Provider>
     )

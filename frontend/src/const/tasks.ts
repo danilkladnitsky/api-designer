@@ -1,4 +1,4 @@
-import { TaskConfig, TaskConfigInProcess } from "shared/task"
+import { TaskConfig, TaskConfigSolution } from "shared/task"
 
 export const SAMPLE_TASK_CONFIG: TaskConfig = {
     id: "sample",
@@ -32,7 +32,7 @@ export const SAMPLE_TASK_CONFIG: TaskConfig = {
     }]
 }
 
-export const EMPTY_CONFIG: TaskConfigInProcess = {
+export const EMPTY_CONFIG: TaskConfigSolution = {
     clients: [],
     container: null,
     router: null,

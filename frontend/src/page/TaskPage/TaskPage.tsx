@@ -1,5 +1,5 @@
 import { Box, Tabs } from "@gravity-ui/uikit"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { ID } from "shared/index"
 
 import { useAppContext } from "@/app/App.context"
@@ -12,34 +12,25 @@ import { TaskDescription } from "@/widgets/TaskDescription/TaskDescription"
 
 import styles from "./TaskPage.module.scss"
 
-const FILES = {
-    PYTHON: "main.py",
-    DOCKER: "docker-compose.yml",
-    NGINX: "nginx.conf"
-} as const
-
-const TABS = [{
-    id: FILES.PYTHON,
-    title: FILES.PYTHON
-},
-{
-    id: FILES.DOCKER,
-    title: FILES.DOCKER
-}
-]
-
 interface Props {
     taskId: ID
 }
 export const TaskPage = ({ taskId }: Props) => {
-    const { userCode, task, loadTaskById, setUserCode } = useAppContext()
+    const { userCode, task, taskFiles, currentFile, setCurrentFile, loadTaskById, setUserCode } = useAppContext()
 
-    const [currentFile, setCurrentFile] = useState<string>(FILES.PYTHON)
-    const [nodes, edges] = convertTaskConfigInProcessToCodeGraph(task?.userSolution || EMPTY_CONFIG)
+    const [nodes, edges] = convertTaskConfigInProcessToCodeGraph(task?.config || EMPTY_CONFIG)
 
     useEffect(() => {
         loadTaskById(taskId)
     }, [])
+
+    const handleFileSelect = (fileName: string) => {
+        const task = taskFiles.find(file => file.fileName === fileName)
+
+        if (task) {
+            setCurrentFile(task)
+        }
+    }
 
     return (
         <Box className={styles.page}>
@@ -51,16 +42,17 @@ export const TaskPage = ({ taskId }: Props) => {
                     <Modal loading={!task} className={styles.codeGraphWidget} title="Архитектура сервиса">
                         <CodeGraph edges={edges} nodes={nodes} />
                     </Modal>
-                    <Modal className={styles.codeEditorWidget} title="Редактор">
+                    <Modal loading={!task} className={styles.codeEditorWidget} title="Редактор">
                         <Tabs
+                            allowNotSelected
                             className={styles.tabs}
-                            onSelectTab={setCurrentFile}
+                            onSelectTab={handleFileSelect}
                             size="m"
-                            activeTab={currentFile}
-                            items={TABS}
+                            activeTab={currentFile?.fileName}
+                            items={taskFiles.map(file => ({ id: file.fileName, title: file.fileName }))}
                         />
-                        {Object.values(FILES).map(file => (
-                            <CodeEditor key={file} className={file === currentFile ? styles.activeCodeFile : styles.codeFile} currentCode={userCode[file]} fileName={file} onFileCodeChange={setUserCode} />
+                        {userCode && Object.entries(userCode).map(([fileName, { code, language }]) => (
+                            <CodeEditor language={language} key={fileName} className={fileName === currentFile?.fileName ? styles.activeCodeFile : styles.codeFile} currentCode={code} fileName={fileName} onFileCodeChange={setUserCode} />
                         ))}
                     </Modal>
 

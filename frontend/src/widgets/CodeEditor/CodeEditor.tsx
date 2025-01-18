@@ -10,9 +10,10 @@ import styles from "./CodeEditor.module.scss"
 
 interface CodeEditorContentProps {
     className?: string
+    language?: string
 }
 
-const CodeEditorContent = ({ className }: CodeEditorContentProps) => {
+const CodeEditorContent = ({ className, language }: CodeEditorContentProps) => {
     const { code, setCode } = useCodeEditorContext()
 
     const handleCodeChange = (value?: string) => {
@@ -23,6 +24,8 @@ const CodeEditorContent = ({ className }: CodeEditorContentProps) => {
             setCode("")
         }
     }
+
+    console.log(language)
 
     return (
         <Box className={cn(styles.wrapper, className)}>
@@ -43,7 +46,7 @@ const CodeEditorContent = ({ className }: CodeEditorContentProps) => {
                         hideCursorInOverviewRuler: true,
                         showFoldingControls: "always"
                     }}
-                    language="python"
+                    language={language}
                     defaultLanguage="python"
                     theme="vs-dark"
                     onChange={handleCodeChange}

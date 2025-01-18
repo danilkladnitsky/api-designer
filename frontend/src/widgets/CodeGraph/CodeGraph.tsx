@@ -30,6 +30,7 @@ const edgeTypes = {
 
 const CodeGraphContent = () => {
     const { edges, nodes, className, onEdgesChange, onNodesChange } = useCodeGraphContext()
+
     return (
         <Box className={cn(styles.codeGraph, className)}>
             <ReactFlow

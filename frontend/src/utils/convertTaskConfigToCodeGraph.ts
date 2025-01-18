@@ -1,4 +1,4 @@
-import { TaskConfig, TaskConfigInProcess } from "shared/task"
+import { TaskConfig, TaskConfigSolution } from "shared/task"
 
 import { CodeGraphEdge, CodeGraphNode } from "@/types/code-graph"
 
@@ -104,7 +104,7 @@ export const convertTaskConfigToCodeGraph = (taskConfig: TaskConfig): [CodeGraph
     return [nodes, edges]
 }
 
-export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigInProcess): [CodeGraphNode[], CodeGraphEdge[]] => {
+export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigSolution): [CodeGraphNode[], CodeGraphEdge[]] => {
     const nodes: CodeGraphNode[] = []
     const edges: CodeGraphEdge[] = []
 

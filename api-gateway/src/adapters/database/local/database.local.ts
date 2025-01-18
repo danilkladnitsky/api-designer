@@ -2,48 +2,44 @@ import { ID } from "shared/index"
 
 import { EntityList, IDatabaseAdapter } from "../database.adapter"
 
-export const createLocalDatabase = async (): Promise<IDatabaseAdapter> => {
-    const memory: Record<EntityList, any[]> = {
-        task: [
-            {
-                id: "1",
-                name: "task 1",
-                description: "description 1",
-                userSolution: {
-                    clients: [],
-                    services: [{
-                        id: "sample-service",
-                        name: "FastApi service",
-                        type: "fastapi",
-                        endpoints: [{
-                            id: "sample-endpoint",
-                            url: "/hello-world",
-                            method: "GET"
-                        }]
-                    }],
-                    container: null,
-                    router: null
-                },
-                answer: {
-                    clients: [],
-                    services: [{
-                        id: "sample-service",
-                        name: "FastApi service",
-                        type: "fastapi",
-                        endpoints: [{
-                            id: "sample-endpoint",
-                            url: "/hello-world",
-                            method: "GET"
-                        }]
-                    }],
-                    container: null,
-                    router: null
-                },
-                createdAt: new Date().toString(),
-                updatedAt: new Date().toString()
+const TASKS = [
+    {
+        id: "1",
+        name: "Task 1",
+        description: "Description 1",
+        files: [{
+            fileName: "main.py",
+            extension: "py",
+            content: "print('Hello World!')",
+            language: "python"
+        },
+        {
+            fileName: "docker-compose.yml",
+            extension: "yml",
+            content: "version: 3.8",
+            language: "yaml"
+        }],
+        config: {
+            clients: [],
+            services: [{
+                id: "sample-service",
+                name: "FastApi service",
+                type: "fastapi",
+                endpoints: [{
+                    id: "sample-endpoint",
+                    url: "/hello-world",
+                    method: "GET"
+                }]
+            }],
+            container: null,
+            router: null
+        }
+    }
+]
 
-            }
-        ]
+export const createLocalDatabase = async (): Promise<IDatabaseAdapter> => {
+    const memory: Record<EntityList, any> = {
+        task: TASKS
     }
 
     return {
