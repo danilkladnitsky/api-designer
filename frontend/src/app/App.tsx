@@ -11,18 +11,32 @@ import { TaskPage } from "@/page/TaskPage/TaskPage"
 import "@/ui/styles/index.scss"
 import { Header } from "@/widgets/Header/Header"
 
-import { AppContextProvider } from "./App.context"
+import { AppContextProvider, useAppContext } from "./App.context"
+
+import { useEffect } from "react"
+
+const AppContent = () => {
+    const { task, loadTaskById } = useAppContext()
+
+    useEffect(() => {
+        loadTaskById("1")
+    }, [])
+
+    return (
+        <ThemeProvider theme="dark">
+            <AppLayout>
+                <Header />
+                {task && <TaskPage task={task} />}
+            </AppLayout>
+        </ThemeProvider>
+    )
+}
 
 export const App = () => {
     return (
-        <ThemeProvider theme="dark">
-            <AppContextProvider>
-                <AppLayout>
-                    <Header />
-                    <TaskPage taskId="1" />
-                </AppLayout>
-            </AppContextProvider>
+        <AppContextProvider>
+            <AppContent />
 
-        </ThemeProvider>
+        </AppContextProvider>
     )
 }

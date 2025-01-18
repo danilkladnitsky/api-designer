@@ -25,8 +25,6 @@ const CodeEditorContent = ({ className, language }: CodeEditorContentProps) => {
         }
     }
 
-    console.log(language)
-
     return (
         <Box className={cn(styles.wrapper, className)}>
             <Box className={styles.codeEditor}>
