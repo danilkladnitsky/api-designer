@@ -104,7 +104,7 @@ export const convertTaskConfigToCodeGraph = (taskConfig: TaskConfig): [CodeGraph
     return [nodes, edges]
 }
 
-export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigSolution): [CodeGraphNode[], CodeGraphEdge[]] => {
+export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigSolution) => {
     const nodes: CodeGraphNode[] = []
     const edges: CodeGraphEdge[] = []
 
@@ -187,6 +187,15 @@ export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigSolu
             }
         })
 
+        if (taskConfig.services) {
+            edges.push({
+                id: `${client.id}-${taskConfig.services[0].id}`,
+                source: client.id,
+                target: taskConfig.services[0].id,
+                type: "requestEdge"
+            })
+        }
+
         if (taskConfig.container) {
             edges.push({
                 id: `${client.id}-${taskConfig.container.id}`,
@@ -197,5 +206,5 @@ export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigSolu
         }
     })
 
-    return [nodes, edges]
+    return { nodes, edges }
 }

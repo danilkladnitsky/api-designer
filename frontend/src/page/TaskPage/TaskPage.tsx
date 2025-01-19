@@ -2,9 +2,8 @@ import { Box, Tabs } from "@gravity-ui/uikit"
 import { Task } from "shared/task"
 
 import { useAppContext } from "@/app/App.context"
-import { EMPTY_CONFIG } from "@/const/tasks"
+import { useCodeGraphNodes } from "@/hooks/useCodeGraphNodes"
 import { Modal } from "@/ui/components/Modal/Modal"
-import { convertTaskConfigInProcessToCodeGraph } from "@/utils/convertTaskConfigToCodeGraph"
 import { CodeEditor } from "@/widgets/CodeEditor/CodeEditor"
 import { CodeGraph } from "@/widgets/CodeGraph/CodeGraph"
 import { TaskDescription } from "@/widgets/TaskDescription/TaskDescription"
@@ -15,9 +14,9 @@ interface Props {
     task: Task
 }
 export const TaskPage = ({ task }: Props) => {
-    const { taskFiles, currentFile, setCurrentFile, updateFileCode } = useAppContext()
+    const { taskFiles, currentFile, setCurrentFile, updateFileCode, generateCodeGraph } = useAppContext()
 
-    const [nodes, edges] = convertTaskConfigInProcessToCodeGraph(task?.config || EMPTY_CONFIG)
+    const { nodes, edges, isLive, taskConfig } = useCodeGraphNodes(task.config)
 
     const handleFileSelect = (fileName: string) => {
         const task = taskFiles.find(file => file.fileName === fileName)
@@ -34,8 +33,8 @@ export const TaskPage = ({ task }: Props) => {
                     <TaskDescription task={task} />
                 </Modal>
                 <Box className={styles.column}>
-                    <Modal loading={!task} className={styles.codeGraphWidget} title="Архитектура сервиса">
-                        <CodeGraph edges={edges} nodes={nodes} />
+                    <Modal loading={!isLive} className={styles.codeGraphWidget} title="Архитектура сервиса">
+                        <CodeGraph key={taskConfig.version} edges={edges} nodes={nodes} />
                     </Modal>
                     <Modal loading={!task} className={styles.codeEditorWidget} title="Редактор">
                         <Tabs
@@ -47,7 +46,7 @@ export const TaskPage = ({ task }: Props) => {
                             items={taskFiles.map(file => ({ id: file.fileName, title: file.fileName }))}
                         />
                         {taskFiles.map(file => (
-                            <CodeEditor language={file.language} key={file.fileName} className={file.fileName === currentFile?.fileName ? styles.activeCodeFile : styles.codeFile} currentCode={file.content} fileName={file.fileName} onFileCodeChange={updateFileCode} />
+                            <CodeEditor onSubmit={generateCodeGraph} language={file.language} key={file.fileName} className={file.fileName === currentFile?.fileName ? styles.activeCodeFile : styles.codeFile} currentCode={file.content} fileName={file.fileName} onFileCodeChange={updateFileCode} />
                         ))}
                     </Modal>
 

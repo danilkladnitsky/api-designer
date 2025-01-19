@@ -6,12 +6,15 @@ export const socket = io("ws://localhost:8080", {
     autoConnect: true
 })
 
-export const useSocket = () => {
+interface Props {
+    onCodeGraphGenerate: (data: any) => void
+}
+
+export const useSocket = ({ onCodeGraphGenerate }: Props) => {
     const [isConnected, setIsConnected] = useState(socket.connected)
 
     useEffect(() => {
         function onConnect() {
-            console.log("connected")
             setIsConnected(true)
         }
 
@@ -22,7 +25,7 @@ export const useSocket = () => {
         socket.on("connect", onConnect)
         socket.on("disconnect", onDisconnect)
         socket.on(WS_EVENTS.UPDATE_BUILD_CODE_GRAPH, (data) => {
-            console.log(data)
+            onCodeGraphGenerate(data)
         })
 
         return () => {

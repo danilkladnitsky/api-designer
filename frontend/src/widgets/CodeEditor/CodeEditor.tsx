@@ -11,9 +11,10 @@ import styles from "./CodeEditor.module.scss"
 interface CodeEditorContentProps {
     className?: string
     language?: string
+    onSubmit: () => void
 }
 
-const CodeEditorContent = ({ className, language }: CodeEditorContentProps) => {
+const CodeEditorContent = ({ className, language, onSubmit }: CodeEditorContentProps) => {
     const { code, setCode } = useCodeEditorContext()
 
     const handleCodeChange = (value?: string) => {
@@ -50,7 +51,7 @@ const CodeEditorContent = ({ className, language }: CodeEditorContentProps) => {
                     onChange={handleCodeChange}
                 />
                 <Box className={styles.action}>
-                    <Button size="xl">
+                    <Button size="xl" onClick={onSubmit}>
                         Проверить
                         <Icon size={18} data={Play} />
                     </Button>

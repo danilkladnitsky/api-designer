@@ -4,6 +4,7 @@ import { Code } from "shared/index"
 interface ICodeEditorContext {
     code: Code
     setCode: (code: Code) => void
+
 }
 
 export interface ICodeEditorContextProviderProps {

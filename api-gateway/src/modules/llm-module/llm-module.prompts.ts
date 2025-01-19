@@ -1,3 +1,4 @@
+import { BuildGraphCodeDto } from "shared/dtos"
 import { LLMInput } from "shared/index"
 
 const FEW_SHOT_QUESTION_1 = `
@@ -8,7 +9,7 @@ async def homepage():
 
 const FEW_SHOT_ANSWER_1 = `
 {
-    "endpoint": "/",
+    "url": "/",
     "method": "GET"
 }
 `
@@ -21,18 +22,18 @@ async def create_item(item: Item, item_id: int):
 
 const FEW_SHOT_ANSWER_2 = `
 {
-    "endpoint": "/items/{item_id}",
+    "url": "/items/{item_id}",
     "method": "POST"
 }
 `
 
 export const PROMPTS = {
-    BUILD_CODE_GRAPH: (code: string): string => {
+    GENERATE_SERVICE_ENDPOINTS_GRAPH: (payload: BuildGraphCodeDto): string => {
         const fewShots: LLMInput[] = [
             {
                 content: `Ты парсер кода из Python в JSON. Найди все вызовы API и сконвертируй их в формат:
                 {
-                    endpoint: string,
+                    url: string,
                     method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
                 }
 
@@ -59,7 +60,7 @@ export const PROMPTS = {
                     Верни только JSON
 
                 Ответь сразу и без комментариев.
-                ${code}`
+                ${payload.code}`
         }
 
         return [...fewShots, question].reduce((acc, cur) => {

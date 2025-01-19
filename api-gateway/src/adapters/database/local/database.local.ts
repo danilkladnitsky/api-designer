@@ -2,44 +2,11 @@ import { ID } from "shared/index"
 
 import { EntityList, IDatabaseAdapter } from "../database.adapter"
 
-const TASKS = [
-    {
-        id: "1",
-        name: "Task 1",
-        description: "Description 1",
-        files: [{
-            fileName: "main.py",
-            extension: "py",
-            content: "print('Hello World!')",
-            language: "python"
-        },
-        {
-            fileName: "docker-compose.yml",
-            extension: "yml",
-            content: "version: 3.8",
-            language: "yaml"
-        }],
-        config: {
-            clients: [],
-            services: [{
-                id: "sample-service",
-                name: "FastApi service",
-                type: "fastapi",
-                endpoints: [{
-                    id: "sample-endpoint",
-                    url: "/hello-world",
-                    method: "GET"
-                }]
-            }],
-            container: null,
-            router: null
-        }
-    }
-]
+import { MOCK_TASKS } from "./mock"
 
 export const createLocalDatabase = async (): Promise<IDatabaseAdapter> => {
     const memory: Record<EntityList, any> = {
-        task: TASKS
+        task: MOCK_TASKS
     }
 
     return {

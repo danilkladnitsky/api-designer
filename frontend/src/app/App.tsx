@@ -16,10 +16,11 @@ import { AppContextProvider, useAppContext } from "./App.context"
 import { useEffect } from "react"
 
 const AppContent = () => {
-    const { task, loadTaskById } = useAppContext()
+    const { task, loadTaskById, getTaskList } = useAppContext()
 
     useEffect(() => {
         loadTaskById("1")
+        getTaskList()
     }, [])
 
     return (

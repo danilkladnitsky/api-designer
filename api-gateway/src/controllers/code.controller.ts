@@ -27,8 +27,7 @@ export const createCodeController = ({
 
     const requestGenerateCodeGraph = async ({ body }: IHttpPayload<BuildGraphCodeDto>
     ) => {
-        const { code } = body
-        return await llmModule.buildCodeGraph({ code })
+        return await llmModule.buildCodeGraph(body)
     }
 
     const getGeneratedCodeGraph = async ({ data }: IBrokerPayload<GetBuiltGraphCodeDto>) => {
