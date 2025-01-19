@@ -1,4 +1,6 @@
-import { IServiceInstance, IWsPayload, WsEvents } from "@/common/services"
+import { WsEvents } from "shared/index"
+
+import { IServiceInstance, IWsPayload } from "@/common/services"
 
 export type WsConfig = {
     port: number

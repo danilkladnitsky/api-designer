@@ -16,6 +16,10 @@ const HELLO_WORLD_TASK: Task = {
 
 app = FastAPI()
 
+@app.get("/hello-world")
+async def hello_world():
+    return "Hello World!"
+
 
         `,
         language: "python"
@@ -23,7 +27,16 @@ app = FastAPI()
     {
         fileName: "docker-compose.yml",
         extension: "yml",
-        content: "version: 3.8",
+        content: `
+version: '3.7'
+
+services:
+  backend_service:
+    build: ./movie-service
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 3000
+    ports:
+      - 3000:3000
+`,
         language: "yaml"
     }],
     config: {

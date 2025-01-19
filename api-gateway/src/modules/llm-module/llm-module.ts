@@ -18,13 +18,25 @@ export interface ILLMModuleConstructor {
 export const createLLModule = ({ redis }: ILLMModuleConstructor): ILLMModule => {
     return {
         buildCodeGraph: async (payload: BuildGraphCodeDto) => {
-            const prompt: BuildGraphCodeEvent = {
-                context: PROMPTS.GENERATE_SERVICE_ENDPOINTS_GRAPH(payload),
-                input: payload.code
+            const getPrompt = (): BuildGraphCodeEvent => {
+                if (payload.extension === "py") {
+                    return {
+                        context: PROMPTS.GENERATE_SERVICE_ENDPOINTS_GRAPH(payload),
+                        input: payload.code,
+                        event: "generate-endpoints"
+                    }
+                }
+                else {
+                    return {
+                        context: PROMPTS.GENERATE_DOCKER_GRAPH(payload),
+                        input: payload.code,
+                        event: "generate-docker"
+                    }
+                }
             }
 
             redis.publish(BROKER_CHANNELS.GENERATE_CODE_GRAPH, {
-                data: prompt, targetChannel: BROKER_CHANNELS.GET_GENERATED_CODE_GRAPH })
+                data: getPrompt(), targetChannel: BROKER_CHANNELS.GET_GENERATED_CODE_GRAPH })
         }
     }
 }

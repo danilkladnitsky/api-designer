@@ -5,3 +5,8 @@ export type BuildGraphCodeDto = {
     extension: string
     code: Code
 }
+
+export type WsGraphPayload = {
+    event: string
+    data: any
+}

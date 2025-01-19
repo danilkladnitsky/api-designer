@@ -1,4 +1,4 @@
-import { TaskConfig, TaskConfigSolution } from "shared/task"
+import { TaskConfig } from "shared/task"
 
 import { CodeGraphEdge, CodeGraphNode } from "@/types/code-graph"
 
@@ -104,7 +104,7 @@ export const convertTaskConfigToCodeGraph = (taskConfig: TaskConfig): [CodeGraph
     return [nodes, edges]
 }
 
-export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigSolution) => {
+export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfig) => {
     const nodes: CodeGraphNode[] = []
     const edges: CodeGraphEdge[] = []
 
@@ -121,6 +121,19 @@ export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigSolu
             },
             draggable: false
         })
+
+        if (taskConfig.container.type === "docker") {
+            nodes.push({
+                id: taskConfig.container.id + "-router",
+                type: "routerNode",
+                data: {
+                    name: "docker ports",
+                    description: taskConfig.container.ports.join(" -> ")
+                },
+                parentId: taskConfig.container.id,
+                extent: "parent"
+            })
+        }
     }
 
     if (taskConfig.router) {
@@ -156,6 +169,14 @@ export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigSolu
                 type: "requestEdge"
             })
         }
+        else if (taskConfig.container?.type === "docker") {
+            edges.push({
+                id: `${taskConfig.container.id}-router-${service.id}`,
+                source: taskConfig.container.id + "-router",
+                target: service.id,
+                type: "requestEdge"
+            })
+        }
 
         service.endpoints?.forEach((endpoint) => {
             edges.push({
@@ -186,15 +207,6 @@ export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfigSolu
                 name: client.name
             }
         })
-
-        if (taskConfig.services) {
-            edges.push({
-                id: `${client.id}-${taskConfig.services[0].id}`,
-                source: client.id,
-                target: taskConfig.services[0].id,
-                type: "requestEdge"
-            })
-        }
 
         if (taskConfig.container) {
             edges.push({

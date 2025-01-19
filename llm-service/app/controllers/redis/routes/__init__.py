@@ -15,7 +15,8 @@ class RedisController:
 
         res = dict()
         res["data"] = dict()
-        res["data"]["response"] = response.response
+        res["data"]["payload"] = response.response
+        res["data"]["event"] = payload["event"]
         res["targetChannel"] = targetChannel
 
         print(res)

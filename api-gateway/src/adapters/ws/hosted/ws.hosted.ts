@@ -1,3 +1,6 @@
+import console from "console"
+
+import { IWsPayload } from "shared/index"
 import { Server } from "socket.io"
 
 import { IWsAdapter, WsConfig } from "../ws.adapter"
@@ -32,9 +35,9 @@ export const createWsHostedAdapter = ({ port }: WsConfig): IWsAdapter => {
         close: async () => {
             wsServer.close()
         },
-        emit: async (channel, payload) => {
+        emit: async (channel, data: IWsPayload) => {
             try {
-                wsServer.emit(channel, payload)
+                wsServer.emit(channel, data)
             }
             catch (err) {
                 console.error(err)

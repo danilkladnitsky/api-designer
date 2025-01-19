@@ -1,5 +1,5 @@
 import { BuildGraphCodeDto } from "shared/dtos"
-import { WS_EVENTS } from "shared/index"
+import { IWsPayload, WS_EVENTS } from "shared/index"
 
 import { IWsAdapter } from "@/adapters/ws/ws.adapter"
 import { IControllerConstructor } from "@/common/controllers"
@@ -8,7 +8,6 @@ import { createHttpHandler, createRedisSubscribeHandlers } from "@/common/utils"
 import { ICodeModule } from "@/modules/code-module/code-module"
 import { LintCodeDto } from "@/modules/code-module/code-module.dto"
 import { ILLMModule } from "@/modules/llm-module/llm-module"
-import { GetBuiltGraphCodeDto } from "@/modules/llm-module/llm-module.dto"
 
 export interface ICodeController {
     codeModule: ICodeModule
@@ -30,8 +29,8 @@ export const createCodeController = ({
         return await llmModule.buildCodeGraph(body)
     }
 
-    const getGeneratedCodeGraph = async ({ data }: IBrokerPayload<GetBuiltGraphCodeDto>) => {
-        ws.emit(WS_EVENTS.UPDATE_BUILD_CODE_GRAPH, JSON.parse(data.response))
+    const getGeneratedCodeGraph = async ({ data }: IBrokerPayload<IWsPayload>) => {
+        ws.emit(WS_EVENTS.UPDATE_BUILD_CODE_GRAPH, data)
     }
 
     const httpHandlers = [

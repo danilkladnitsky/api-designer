@@ -28,6 +28,7 @@ export type TaskContainer = {
     id: string
     name: string
     type: 'docker'
+    ports: number[]
 }
 
 export type TaskDescription = {

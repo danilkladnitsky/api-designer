@@ -13,7 +13,7 @@ export type LLMOutput = {
 };
 
 export type CodeAPIGraph = {
-    endpoint: string;
+    url: string;
     method: APIMethod;
 }
 

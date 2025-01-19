@@ -57,7 +57,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
             return
         }
 
-        updateCodeGraph(pythonFile)
+        const requests = taskFiles.map(file => updateCodeGraph(file))
+
+        await Promise.all(requests)
     }
 
     return (

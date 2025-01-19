@@ -10,9 +10,11 @@ export type BuildGraphCodeDto = {
 export type BuildGraphCodeEvent = {
     input: string
     context: string
+    event: string
     model?: string
 }
 
 export type GetBuiltGraphCodeDto = {
-    response: string
+    payload: string
+    event: string
 }
