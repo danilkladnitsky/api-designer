@@ -7,13 +7,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install --only=production
+RUN npm i
 
 # Copy the rest of the application files
 COPY . .
-
-# Build the application (for TypeScript)
-RUN npm run build
-
-# Start the application
-CMD [ "npm", "start" ]

@@ -4,7 +4,7 @@ import {
     Selectable,
     Updateable
 } from "kysely"
-import { ID } from "shared"
+import { ID } from "shared/index"
 
 export interface PgDatabase {
     task: TaskTable

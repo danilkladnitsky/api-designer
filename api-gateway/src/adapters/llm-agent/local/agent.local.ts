@@ -1,15 +1,12 @@
-import { ILLMAgentAdapter } from "../llm.adapter"
+import { LLMInput } from "shared/index"
 
-export const createLocalLLMAgent = async (): Promise<ILLMAgentAdapter> => {
+export const createLocalLLMAgent = async () => {
     return {
         name: "local llm agent",
         close: async () => {},
         setApiKey: () => {},
-        executePrompt: async (input: unknown) => {
-            return JSON.stringify([{
-                role: "assistant",
-                content: "Hello World"
-            }])
+        executePrompt: async (input: LLMInput[]) => {
+            return Promise.resolve({ content: "", type: "" })
         }
     }
 }

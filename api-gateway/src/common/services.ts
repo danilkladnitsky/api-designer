@@ -1,8 +1,6 @@
 import { APIMethod } from "shared/index"
 import { WsEvents } from "shared/ws"
 
-import { IRedisAdapter } from "@/adapters/redis/redis.adapter"
-
 export type BrokerChannels = (typeof BROKER_CHANNELS)[keyof typeof BROKER_CHANNELS]
 
 export const ServiceNames = {
@@ -38,7 +36,6 @@ export interface IHttpServerConstructor {
 }
 
 export interface IRedisBrokerConstructor {
-    redis: IRedisAdapter
     subscribers: IRedisHandler[]
 }
 

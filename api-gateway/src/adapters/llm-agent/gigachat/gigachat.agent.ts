@@ -1,12 +1,10 @@
 import path from "path"
 
-import { LLMInput } from "shared"
-
-import { ILLMAgentAdapter } from "../llm.adapter"
+import { LLMInput } from "shared/index"
 
 import { GigaChatResponse } from "./gigachat.agent.dto"
 
-export const createGigachatLLMAgent = async (): Promise<ILLMAgentAdapter> => {
+export const createGigachatLLMAgent = async () => {
     let accessToken: string | null = null
 
     process.env.NODE_EXTRA_CA_CERTS = path.resolve(__dirname, "certs")
@@ -44,7 +42,10 @@ export const createGigachatLLMAgent = async (): Promise<ILLMAgentAdapter> => {
 
             const output = data.choices[0].message.content
 
-            return output
+            return {
+                content: output,
+                type: ""
+            }
         }
     }
 }

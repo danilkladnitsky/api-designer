@@ -4,7 +4,7 @@ import {
     PostgresDialect
 } from "kysely"
 import { Pool } from "pg"
-import { ID } from "shared"
+import { ID } from "shared/index"
 
 import { EntityList, IDatabaseAdapter } from "../database.adapter"
 
@@ -38,7 +38,7 @@ export const createPgDatabase = async (): Promise<IDatabaseAdapter> => {
         },
         getEntities: async <TEntity>(tableName: EntityList) => {
             return (await db
-                .selectFrom(tableName)
+                .selectFrom(tableName as any)
                 .selectAll()
                 .execute()) as TEntity[]
         },
@@ -48,21 +48,21 @@ export const createPgDatabase = async (): Promise<IDatabaseAdapter> => {
             entity: Insertable<Entity>
         ) => {
             return (await db
-                .insertInto(tableName)
+                .insertInto(tableName as any)
                 .values(entity)
                 .returningAll()
                 .executeTakeFirst()) as TOperationResult
         },
         findEntityById: async <TEntity>(tableName: EntityList, id: ID) => {
             return (await db
-                .selectFrom(tableName)
+                .selectFrom(tableName as any)
                 .selectAll()
                 .where("id", "=", id)
                 .executeTakeFirst()) as TEntity
         },
         deleteEntityById: async <TResult>(tableName: EntityList, id: ID) => {
             return (await db
-                .deleteFrom(tableName)
+                .deleteFrom(tableName as any)
                 .where("id", "=", id)
                 .returningAll()
                 .executeTakeFirst()) as TResult

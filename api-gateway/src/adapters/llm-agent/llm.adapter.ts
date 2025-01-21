@@ -9,5 +9,5 @@ export type LLMResponse<TContent = string> = {
 export interface ILLMAgentAdapter extends IServiceInstance {
     name: string
     setApiKey: (apiKey: string) => void
-    executePrompt: <TContent>(input: LLMInput[]) => Promise<LLMResponse<TContent>>
+    executePrompt: <TContent = any>(input: LLMInput[]) => Promise<LLMResponse<TContent>>
 }
