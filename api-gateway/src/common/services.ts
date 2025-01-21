@@ -1,4 +1,5 @@
-import { APIMethod, WsEvents } from "shared/index"
+import { APIMethod } from "shared/index"
+import { WsEvents } from "shared/ws"
 
 import { IRedisAdapter } from "@/adapters/redis/redis.adapter"
 

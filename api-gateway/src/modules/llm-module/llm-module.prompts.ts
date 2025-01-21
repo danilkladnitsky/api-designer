@@ -68,10 +68,10 @@ async def homepage():
 `
 
 const FEW_SHOT_ANSWER_1 = `
-{
+[{
     "url": "/",
     "method": "GET"
-}
+}]
 `
 
 const FEW_SHOT_QUESTION_2 = `
@@ -81,10 +81,10 @@ async def create_item(item: Item, item_id: int):
 `
 
 const FEW_SHOT_ANSWER_2 = `
-{
+[{
     "url": "/items/{item_id}",
     "method": "POST"
-}
+}]
 `
 
 export const PROMPTS = {
@@ -92,10 +92,10 @@ export const PROMPTS = {
         const fewShots: LLMInput[] = [
             {
                 content: `Ты парсер кода из Python в JSON. Найди все вызовы API и сконвертируй их в формат:
-                {
+                [{
                     url: string,
                     method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
-                }
+                }]
 
                 Верни только JSON
             `,
@@ -113,11 +113,11 @@ export const PROMPTS = {
         const question = {
             content: `
                 Выведи все API - функции в виде массива в формате
-                {
+                [{
                     urt: string,
                     method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
-                }
-                    Верни только JSON
+                }]
+                    Верни только JSON-массив
 
                 Ответь сразу и без комментариев.
                 ${payload.code}`

@@ -1,3 +1,5 @@
+import { WsEvents } from "./ws";
+
 export type ID = string;
 export type Timestamp = string;
 export type APIMethod = "GET" | "POST";
@@ -38,7 +40,6 @@ export const WS_EVENTS = {
     UPDATE_BUILD_CODE_GRAPH: "update-build-code-graph"
 } as const
 
-export type WsEvents = (typeof WS_EVENTS)[keyof typeof WS_EVENTS]
 
 export interface IWsPayload<TBody = unknown> {
     event: WsEvents

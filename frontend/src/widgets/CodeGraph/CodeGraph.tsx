@@ -3,10 +3,13 @@ import { Background, ReactFlow } from "@xyflow/react"
 
 import "@xyflow/react/dist/style.css"
 
+import { useMemo } from "react"
+import { TaskConfig } from "shared/task"
+
 import { cn } from "@/utils/cn"
+import { convertTaskConfigInProcessToCodeGraph } from "@/utils/convertTaskConfigToCodeGraph"
 
 import styles from "./CodeGraph.module.scss"
-import { CodeGraphContextProvider, ICodeGraphContextProviderProps, useCodeGraphContext } from "./context/CodeGraph.context"
 import { RequestEdge } from "./Edges/RequestEdge/RequestEdge"
 import { ClientNode } from "./Nodes/ClientNode/ClientNode"
 import { DockerNode } from "./Nodes/DockerNode/DockerNode"
@@ -14,6 +17,7 @@ import { EndpointNode } from "./Nodes/EndpointNode/EndpointNode"
 import { RouterNode } from "./Nodes/RouterNode/RouterNode"
 import { ServiceNode } from "./Nodes/ServiceNode/ServiceNode"
 import { TaskNode } from "./Nodes/TaskNode/TaskNode"
+import { createLayout } from "./utils/createLayout"
 
 const nodeTypes = {
     serviceNode: ServiceNode,
@@ -28,16 +32,21 @@ const edgeTypes = {
     requestEdge: RequestEdge
 }
 
-const CodeGraphContent = () => {
-    const { edges, nodes, className, onEdgesChange, onNodesChange } = useCodeGraphContext()
+interface Props {
+    taskConfig: TaskConfig
+}
+
+export const CodeGraph = ({ taskConfig }: Props) => {
+    const { edges, nodes } = useMemo(() => {
+        const data = convertTaskConfigInProcessToCodeGraph(taskConfig)
+        return createLayout(data.nodes, data.edges)
+    }, [taskConfig])
 
     return (
-        <Box className={cn(styles.codeGraph, className)}>
+        <Box className={cn(styles.codeGraph)}>
             <ReactFlow
-                nodes={nodes}
                 edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
+                nodes={nodes}
                 snapToGrid
                 fitView
                 attributionPosition="bottom-left"
@@ -48,13 +57,5 @@ const CodeGraphContent = () => {
                 <Background bgColor="#1B1B1B" />
             </ReactFlow>
         </Box>
-    )
-}
-
-export const CodeGraph = (contextProps: ICodeGraphContextProviderProps) => {
-    return (
-        <CodeGraphContextProvider {...contextProps}>
-            <CodeGraphContent />
-        </CodeGraphContextProvider>
     )
 }

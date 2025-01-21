@@ -14,7 +14,7 @@ export type TaskClient = {
 export type TaskEndpoint = {
     id: string
     url: string
-    method: 'GET' | 'POST'
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS'
 }
 
 export type TaskService = {
@@ -42,6 +42,14 @@ export interface TaskConfig {
     services: TaskService[]
 }
 
+export interface TaskConfigSolution {
+    container: Pick<TaskContainer, 'ports' | 'type'>
+    router: Pick<TaskRouter, 'type'>
+    services: {
+        endpoints: Pick<TaskEndpoint, 'method' | 'url'>[]
+    }[]
+}
+
 export type TaskFile = {
     fileName: string
     extension: string
@@ -60,7 +68,7 @@ export interface Task {
 export interface TaskSolution {
     id: ID
     taskId: ID
-    answer: TaskConfig
+    answer: TaskConfigSolution
 }
 
 export interface TaskUserSolution {

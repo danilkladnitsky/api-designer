@@ -1,0 +1,1 @@
+export type WsEvents = "generate-endpoints" | "generate-docker"

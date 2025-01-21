@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { IWsPayload, WS_EVENTS } from "shared/index"
+import { WsEvents } from "shared/ws"
 import { io } from "socket.io-client"
 
 export const socket = io("ws://localhost:8080", {
@@ -7,7 +8,7 @@ export const socket = io("ws://localhost:8080", {
 })
 
 interface Props {
-    onCodeGraphGenerate: (graphType: string, graph: Record<string, any>) => void
+    onCodeGraphGenerate: (graphType: WsEvents, graph: any) => void
 }
 
 export const useSocket = ({ onCodeGraphGenerate }: Props) => {
@@ -25,7 +26,19 @@ export const useSocket = ({ onCodeGraphGenerate }: Props) => {
         socket.on("connect", onConnect)
         socket.on("disconnect", onDisconnect)
         socket.on(WS_EVENTS.UPDATE_BUILD_CODE_GRAPH, ({ event, payload }: IWsPayload<string>) => {
-            onCodeGraphGenerate(event, JSON.parse(payload))
+            try {
+                const parsedPayload = JSON.parse(payload)
+
+                if (event === "generate-endpoints") {
+                    onCodeGraphGenerate("generate-endpoints", Array.isArray(parsedPayload) ? parsedPayload : [parsedPayload])
+                }
+                else {
+                    onCodeGraphGenerate(event, parsedPayload)
+                }
+            }
+            catch (error) {
+                console.error(error)
+            }
         })
 
         return () => {

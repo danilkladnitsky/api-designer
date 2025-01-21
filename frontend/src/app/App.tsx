@@ -6,20 +6,20 @@ import "@gravity-ui/uikit/styles/styles.css"
 
 import "@/ui/styles/theme.scss"
 
+import { useEffect } from "react"
+
 import { AppLayout } from "@/layout/AppLayout/AppLayout"
+import { TaskListPage } from "@/page/TaskListPage/TaskListPage"
 import { TaskPage } from "@/page/TaskPage/TaskPage"
 import "@/ui/styles/index.scss"
 import { Header } from "@/widgets/Header/Header"
 
 import { AppContextProvider, useAppContext } from "./App.context"
 
-import { useEffect } from "react"
-
 const AppContent = () => {
-    const { task, loadTaskById, getTaskList } = useAppContext()
+    const { task, getTaskList } = useAppContext()
 
     useEffect(() => {
-        loadTaskById("1")
         getTaskList()
     }, [])
 
@@ -27,6 +27,7 @@ const AppContent = () => {
         <ThemeProvider theme="dark">
             <AppLayout>
                 <Header />
+                {!task && <TaskListPage />}
                 {task && <TaskPage task={task} />}
             </AppLayout>
         </ThemeProvider>

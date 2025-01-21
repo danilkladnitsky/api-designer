@@ -1,28 +1,32 @@
-import { useMemo, useState } from "react"
-import { TaskConfig, TaskContainer, TaskEndpoint, TaskService } from "shared/task"
+import { useState } from "react"
+import { TaskConfig, TaskContainer, TaskEndpoint, TaskRouter, TaskService } from "shared/task"
+import { WsEvents } from "shared/ws"
 
-import { ITaskConfig } from "@/types/task"
 import { convertTaskConfigInProcessToCodeGraph } from "@/utils/convertTaskConfigToCodeGraph"
 import { useSocket } from "@/ws/useSocket"
 
 type GeneratedEndpoint = Omit<TaskEndpoint, "id">
 type GeneratedContainer = Omit<TaskContainer, "id">
 
-export const useCodeGraphNodes = (defaultTaskConfig: TaskConfig) => {
-    const [taskConfig, setTaskConfig] = useState<ITaskConfig>(defaultTaskConfig)
+interface Props {
+    taskConfig: TaskConfig
+    setTaskConfig: (taskConfig: TaskConfig) => void
+}
 
-    const graph = useMemo(() => convertTaskConfigInProcessToCodeGraph(taskConfig), [taskConfig])
+const counter = 0
 
-    const onCodeGraphGenerate = (type: string, data: GeneratedEndpoint[] | GeneratedContainer) => {
-        setTaskConfig((prevConfig) => {
+export const useCodeGraphNodes = ({ taskConfig, setTaskConfig }: Props) => {
+    const [graph, setGraph] = useState(convertTaskConfigInProcessToCodeGraph(taskConfig))
+
+    const onCodeGraphGenerate = (type: WsEvents, data: GeneratedEndpoint[] | GeneratedContainer) => {
+        const prevConfig = taskConfig
+
+        const getConfig = () => {
             const service = prevConfig.services[0]
 
-            const hasEndpoints = Array.isArray(data)
+            if (type === "generate-endpoints") {
+                const endpoints = data as GeneratedEndpoint[]
 
-            console.log(data, hasEndpoints)
-
-            if (hasEndpoints) {
-                const endpoints = data
                 const updatedService: TaskService = {
                     ...service,
                     endpoints: endpoints.map(endpoint => ({
@@ -33,25 +37,42 @@ export const useCodeGraphNodes = (defaultTaskConfig: TaskConfig) => {
 
                 return {
                     ...prevConfig,
-                    version: prevConfig.version ? prevConfig.version + 1 : 1,
+                    version: counter + 1,
                     services: [updatedService]
                 }
             }
+            else if (type === "generate-docker") {
+                const container = data as GeneratedContainer
 
-            const newContainer: TaskContainer = {
-                ...prevConfig.container,
-                id: Math.random().toString(36).substring(2, 9),
-                name: data.name,
-                ports: data.ports,
-                type: data.type
+                const newContainer: TaskContainer = {
+                    ...prevConfig.container,
+                    id: Math.random().toString(36).substring(2, 9),
+                    name: container.name,
+                    ports: container.ports,
+                    type: container.type
+                }
+
+                const router: TaskRouter = {
+                    id: Math.random().toString(36).substring(2, 9),
+                    name: container.name,
+                    type: "docker"
+                }
+
+                return {
+                    ...prevConfig,
+                    version: counter + 1,
+                    container: newContainer,
+                    router
+                }
             }
 
-            return {
-                ...prevConfig,
-                version: prevConfig.version ? prevConfig.version + 1 : 1,
-                container: newContainer
-            }
-        })
+            return prevConfig
+        }
+
+        const result = getConfig()
+
+        setTaskConfig(result)
+        setGraph(convertTaskConfigInProcessToCodeGraph(result))
     }
 
     const { isConnected } = useSocket({ onCodeGraphGenerate })

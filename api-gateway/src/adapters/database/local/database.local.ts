@@ -2,11 +2,12 @@ import { ID } from "shared/index"
 
 import { EntityList, IDatabaseAdapter } from "../database.adapter"
 
-import { MOCK_TASKS } from "./mock"
+import { MOCK_SOLUTIONS, MOCK_TASKS } from "./mock"
 
 export const createLocalDatabase = async (): Promise<IDatabaseAdapter> => {
     const memory: Record<EntityList, any> = {
-        task: MOCK_TASKS
+        task: MOCK_TASKS,
+        solution: MOCK_SOLUTIONS
     }
 
     return {
@@ -43,6 +44,15 @@ export const createLocalDatabase = async (): Promise<IDatabaseAdapter> => {
             memory[entityName] = memory[entityName].filter(
                 (entity: { id: ID }) => entity.id !== id
             )
+        },
+        findEntityByProperty: async <TDatabaseEntity = any>(
+            entityName: EntityList,
+            property: string,
+            value: any
+        ) => {
+            return memory[entityName].find(
+                (entity: any) => entity[property] === value
+            ) as TDatabaseEntity | null
         }
     }
 }

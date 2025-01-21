@@ -1,6 +1,7 @@
-import { Play } from "@gravity-ui/icons"
-import { Box, Button, Icon } from "@gravity-ui/uikit"
+import { Box } from "@gravity-ui/uikit"
 import { Editor } from "@monaco-editor/react"
+import { ReactNode } from "react"
+import { TaskFile } from "shared/task"
 
 import { LoadingScreen } from "@/ui/components/LoadingScreen/LoadingScreen"
 import { cn } from "@/utils/cn"
@@ -11,11 +12,11 @@ import styles from "./CodeEditor.module.scss"
 interface CodeEditorContentProps {
     className?: string
     language?: string
-    onSubmit: () => void
+    footer?: (file: TaskFile) => ReactNode
 }
 
-const CodeEditorContent = ({ className, language, onSubmit }: CodeEditorContentProps) => {
-    const { code, setCode } = useCodeEditorContext()
+const CodeEditorContent = ({ className, language, footer }: CodeEditorContentProps) => {
+    const { code, file, setCode } = useCodeEditorContext()
 
     const handleCodeChange = (value?: string) => {
         if (value) {
@@ -50,21 +51,16 @@ const CodeEditorContent = ({ className, language, onSubmit }: CodeEditorContentP
                     theme="vs-dark"
                     onChange={handleCodeChange}
                 />
-                <Box className={styles.action}>
-                    <Button size="xl" onClick={onSubmit}>
-                        Проверить
-                        <Icon size={18} data={Play} />
-                    </Button>
+                {footer?.(file)}
 
-                </Box>
             </Box>
         </Box>
     )
 }
 
-export const CodeEditor = ({ currentCode, fileName, onFileCodeChange, ...contentProps }: CodeEditorContentProps & ICodeEditorContextProviderProps) => {
+export const CodeEditor = ({ currentCode, file, onFileCodeChange, ...contentProps }: CodeEditorContentProps & ICodeEditorContextProviderProps) => {
     return (
-        <CodeEditorContextProvider onFileCodeChange={onFileCodeChange} fileName={fileName} currentCode={currentCode}>
+        <CodeEditorContextProvider onFileCodeChange={onFileCodeChange} file={file} currentCode={currentCode}>
             <CodeEditorContent {...contentProps} />
         </CodeEditorContextProvider>
     )

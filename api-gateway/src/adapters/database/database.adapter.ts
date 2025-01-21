@@ -1,10 +1,10 @@
-import { ID } from "shared"
+import { ID } from "shared/index"
 
 import { IServiceInstance } from "@/common/services"
 
 export type DatabaseEntity = Record<string, unknown>
 
-export type EntityList = "task"
+export type EntityList = "task" | "solution"
 
 export interface IDatabaseAdapter extends IServiceInstance {
     connect: () => Promise<void>
@@ -23,4 +23,9 @@ export interface IDatabaseAdapter extends IServiceInstance {
         entityName: EntityList,
         id: ID
     ) => Promise<void>
+    findEntityByProperty: <TDatabaseEntity = any>(
+        entityName: EntityList,
+        property: string,
+        value: any
+    ) => Promise<TDatabaseEntity | null>
 }

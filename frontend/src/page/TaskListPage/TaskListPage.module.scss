@@ -1,0 +1,29 @@
+.taskList {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
+
+}
+
+.tasks {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
+.task {
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    display: flex;
+    flex: 400px 0;
+    flex-direction: column;
+    gap: 8px;
+    height: 200px;
+    padding: 16px;
+}
+
+.taskDescription {
+    height: fit-content;
+    overflow-y: auto;
+}
