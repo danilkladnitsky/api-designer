@@ -111,8 +111,14 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
             return
         }
 
-        setTaskFiles(taskFiles.map(file => file.fileName === fileName ? { ...file, content: code } : file))
-        debouncedGraphUpdate(changedFile)
+        const updatedFiles = taskFiles.map(file => file.fileName === fileName ? { ...file, content: code } : file)
+        const updatedFile = updatedFiles.find(file => file.fileName === fileName)
+
+        setTaskFiles(updatedFiles)
+
+        if (updatedFile) {
+            debouncedGraphUpdate(updatedFile)
+        }
     }
 
     const loadTaskById = async (id: ID) => {

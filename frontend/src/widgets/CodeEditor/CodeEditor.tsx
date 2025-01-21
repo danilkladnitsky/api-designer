@@ -3,6 +3,7 @@ import { Editor } from "@monaco-editor/react"
 import { ReactNode } from "react"
 import { TaskFile } from "shared/task"
 
+import { useAppContext } from "@/app/App.context"
 import { LoadingScreen } from "@/ui/components/LoadingScreen/LoadingScreen"
 import { cn } from "@/utils/cn"
 
@@ -16,6 +17,7 @@ interface CodeEditorContentProps {
 }
 
 const CodeEditorContent = ({ className, language, footer }: CodeEditorContentProps) => {
+    const { taskConfig, isGenerating } = useAppContext()
     const { code, file, setCode } = useCodeEditorContext()
 
     const handleCodeChange = (value?: string) => {
@@ -29,6 +31,7 @@ const CodeEditorContent = ({ className, language, footer }: CodeEditorContentPro
 
     return (
         <Box className={cn(styles.wrapper, className)}>
+
             <Box className={styles.codeEditor}>
                 <Editor
                     loading={<LoadingScreen />}

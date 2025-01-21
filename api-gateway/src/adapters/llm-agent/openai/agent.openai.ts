@@ -27,8 +27,6 @@ export const createOpenAILLMAgent = async (): Promise<ILLMAgentAdapter> => {
                     type: "json_object" }
             })
 
-            console.log(chatCompletion)
-
             const parseResponse = () => {
                 const chatResponse = chatCompletion.choices[0].message.content
                 try {

@@ -1,11 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export function debounce(func: (...args: any[]) => void, delay: number) {
-    let timeoutId: NodeJS.Timeout
+export function debounce<T extends (...args: any[]) => void>(
+    func: T,
+    wait: number
+): (...args: Parameters<T>) => void {
+    let timeout: ReturnType<typeof setTimeout> | null
 
-    return (...args: any[]) => {
-        clearTimeout(timeoutId)
-        timeoutId = setTimeout(() => {
+    return function (...args: Parameters<T>) {
+        if (timeout) {
+            clearTimeout(timeout)
+        }
+
+        timeout = setTimeout(() => {
             func(...args)
-        }, delay)
+        }, wait)
     }
 }

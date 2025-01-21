@@ -4,7 +4,12 @@
     display: flex;
     gap: 16px;
     justify-content: space-between;
+    max-height: 60px;
     padding: 16px 24px;
+
+    img {
+        height: 32px;
+    }
 }
 
 .headerLeft {

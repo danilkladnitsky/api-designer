@@ -14,3 +14,20 @@
     max-height: 100%;
     overflow-y: auto;
 }
+
+.linksList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.link {
+    align-items: center;
+    display: flex;
+    font-weight: 600;
+    gap: 8px;
+}
+
+.linkSkeleton {
+    height: 25px;
+}
