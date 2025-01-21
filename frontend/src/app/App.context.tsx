@@ -1,14 +1,11 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from "react"
+import { createContext, ReactNode, useCallback, useContext, useState } from "react"
 import { Code, ID } from "shared/index"
 import { Task, TaskConfig, TaskFile } from "shared/task"
-import { WsEvents } from "shared/ws"
 
-import { checkTaskSolution, getTaskById, getTasks, updateCodeGraph } from "@/api"
+import { checkTaskSolution, generateContainer, generateEndpoints, getTaskById, getTasks } from "@/api"
 import { SAMPLE_TASK_CONFIG } from "@/const/tasks"
 import { ITaskSolutionStatus } from "@/types/task"
 import { debounce } from "@/ui/hooks/debounce"
-import { syncTaskConfig } from "@/utils/syncTaskConfig"
-import { useSocket } from "@/ws/useSocket"
 
 interface IAppContext {
     task: Task | null
@@ -17,16 +14,19 @@ interface IAppContext {
     currentFile: TaskFile | null
     taskConfig: TaskConfig
     solutionStatus: ITaskSolutionStatus | null
+    isGenerating: boolean
+    isChecking: boolean
+    codeView: "code" | "diagram"
     setTask: (task: Task | null) => void
     setTaskConfig: (task: TaskConfig) => void
     getTaskList: () => void
     setCurrentFile: (file: TaskFile) => void
     updateFileCode: (fileName: string, code: Code) => void
     loadTaskById: (id: ID) => void
-    generateCodeGraph: (file: TaskFile) => void
     checkSolution: () => void
     setSolutionStatus: (status: ITaskSolutionStatus | null) => void
     clearSolutionStatus: () => void
+    setCodeView: (view: "code" | "diagram") => void
 }
 
 const AppContext = createContext({} as IAppContext)
@@ -40,26 +40,79 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     const [currentFile, setCurrentFile] = useState<TaskFile | null>(null)
     const [solutionStatus, setSolutionStatus] = useState<ITaskSolutionStatus | null>(null)
     const [taskConfig, setTaskConfig] = useState<TaskConfig>(SAMPLE_TASK_CONFIG)
+    const [isGenerating, setIsGenerating] = useState(false)
+    const [codeView, setCodeView] = useState("code")
+    const [isChecking, setIsChecking] = useState(false)
 
-    const onCodeGraphGenerate = (type: WsEvents, data: any) => {
-        const syncedTaskConfig = syncTaskConfig(type, taskConfig, data)
+    const updateFileTaskConfig = async (file: TaskFile) => {
+        setIsGenerating(true)
 
-        console.log(syncedTaskConfig)
+        const generate = () => {
+            if (file.extension === "py") {
+                return generateEndpoints(file)
+            }
+            else {
+                return generateContainer(file)
+            }
+        }
 
-        setTaskConfig(syncedTaskConfig)
+        const response = await generate()
+
+        if (!response) {
+            setIsGenerating(false)
+            return
+        }
+
+        const { content, type } = response
+
+        if (type === "endpoints") {
+            const { endpoints } = content
+            setTaskConfig((prevConfig) => {
+                const service = prevConfig.services[0]
+
+                return {
+                    ...prevConfig,
+                    services: [
+                        {
+                            ...service,
+                            endpoints: endpoints.map((e, idx) => ({ ...e, id: idx.toString() }))
+                        }
+                    ]
+                }
+            })
+        }
+        else if (type === "container") {
+            const { container } = content
+
+            setTaskConfig((prevConfig) => {
+                if (!container) {
+                    return prevConfig
+                }
+
+                return {
+                    ...prevConfig,
+                    container: {
+                        ...container,
+                        id: Math.random().toString(36).substring(2, 9)
+                    }
+                }
+            })
+        }
+
+        setIsGenerating(false)
     }
 
-    useSocket({ onCodeGraphGenerate })
-
-    const debouncedGraphUpdate = useMemo(() => debounce(updateCodeGraph, 2500), [])
+    const debouncedGraphUpdate = useCallback(debounce(updateFileTaskConfig, 1500), [])
 
     const updateFileCode = (fileName: string, code: Code) => {
         const changedFile = taskFiles.find(file => file.fileName === fileName)
 
-        if (changedFile) {
-            setTaskFiles(taskFiles.map(file => file.fileName === fileName ? { ...file, content: code } : file))
-            debouncedGraphUpdate(changedFile)
+        if (!changedFile) {
+            return
         }
+
+        setTaskFiles(taskFiles.map(file => file.fileName === fileName ? { ...file, content: code } : file))
+        debouncedGraphUpdate(changedFile)
     }
 
     const loadTaskById = async (id: ID) => {
@@ -71,6 +124,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
         setTask(task)
         setTaskFiles(task.files)
+        updateTaskConfig(task.files)
         setCurrentFile(task.files[0])
     }
 
@@ -82,18 +136,24 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
-    const generateCodeGraph = async (file: TaskFile) => {
-        updateCodeGraph(file)
-    }
+    const updateTaskConfig = async (taskFiles: TaskFile[]) => {
+        const filesForUpdate = taskFiles.map(file => updateFileTaskConfig(file))
 
+        await Promise.all(filesForUpdate)
+    }
     const checkSolution = async () => {
         if (!task || !taskConfig) {
             return
         }
 
+        setIsChecking(true)
+
+        await updateTaskConfig(taskFiles)
+
         const response = await checkTaskSolution({ taskId: task.id, userSolutionConfig: taskConfig })
 
         if (!response) {
+            setIsChecking(false)
             return
         }
 
@@ -101,10 +161,12 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
             completed: response.completed,
             message: response.message
         })
+
+        setIsChecking(false)
     }
 
     return (
-        <AppContext.Provider value={{ updateFileCode, setTask, clearSolutionStatus: () => setSolutionStatus(null), checkSolution, loadTaskById, setCurrentFile, getTaskList, generateCodeGraph, setSolutionStatus, solutionStatus, task, taskFiles, currentFile, taskList, taskConfig, setTaskConfig }}>
+        <AppContext.Provider value={{ isChecking, setCodeView, updateFileCode, setTask, clearSolutionStatus: () => setSolutionStatus(null), checkSolution, loadTaskById, setCurrentFile, getTaskList, setSolutionStatus, codeView, isGenerating, solutionStatus, task, taskFiles, currentFile, taskList, taskConfig, setTaskConfig }}>
             {children}
         </AppContext.Provider>
     )

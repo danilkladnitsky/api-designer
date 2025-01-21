@@ -43,8 +43,8 @@ export interface TaskConfig {
 }
 
 export interface TaskConfigSolution {
-    container: Pick<TaskContainer, 'ports' | 'type'>
-    router: Pick<TaskRouter, 'type'>
+    container: Pick<TaskContainer, 'ports' | 'type'> | null
+    router: Pick<TaskRouter, 'type'> | null
     services: {
         endpoints: Pick<TaskEndpoint, 'method' | 'url'>[]
     }[]

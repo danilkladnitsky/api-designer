@@ -1,5 +1,6 @@
-import { Code, ID } from "."
-import { TaskConfig } from "./task"
+import { Code, ID, LLMOutput } from "."
+import { EducationLink } from "./education"
+import { TaskConfig, TaskContainer, TaskEndpoint } from "./task"
 
 export type BuildGraphCodeDto = {
     filename: string
@@ -21,3 +22,17 @@ export type CheckTaskUserSolutionResponseDto = {
     completed: boolean;
     message: string;
 }
+
+export type GenerateEndpointsResponse = LLMOutput<{
+    endpoints: Omit<TaskEndpoint, 'id'>[]
+}, 'endpoints'>
+
+export type GenerateEducationLinksResponse = LLMOutput<{
+    links: EducationLink[]
+}, 'education-links'>
+
+
+export type GenerateContainerResponse = LLMOutput<
+     {
+    container: Omit<TaskContainer, 'id'>
+}, 'container'>

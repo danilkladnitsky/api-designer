@@ -1,10 +1,19 @@
-import { CheckTaskUserSolutionDto, CheckTaskUserSolutionResponseDto } from "shared/dtos"
+import { BuildGraphCodeDto, CheckTaskUserSolutionDto, CheckTaskUserSolutionResponseDto, GenerateContainerResponse, GenerateEducationLinksResponse, GenerateEndpointsResponse } from "shared/dtos"
+import { ID } from "shared/index"
 import { Task, TaskFile } from "shared/task"
 
 import { sendRequest } from "./utils"
 
-export const updateCodeGraph = async (payload: TaskFile) => {
-    return await sendRequest("/code/graph", "POST", {
+export const generateContainer = async (payload: TaskFile) => {
+    return await sendRequest<BuildGraphCodeDto, GenerateContainerResponse>("/code/graph", "POST", {
+        code: payload.content,
+        extension: payload.extension,
+        filename: payload.fileName
+    })
+}
+
+export const generateEndpoints = async (payload: TaskFile) => {
+    return await sendRequest<BuildGraphCodeDto, GenerateEndpointsResponse>("/code/graph", "POST", {
         code: payload.content,
         extension: payload.extension,
         filename: payload.fileName
@@ -30,6 +39,19 @@ export const checkTaskSolution = async (payload: CheckTaskUserSolutionDto): Prom
         return {
             completed: false,
             message: "Task solution not found"
+        }
+    }
+
+    return result
+}
+
+export const generateLinks = async (taskId: ID): Promise<GenerateEducationLinksResponse> => {
+    const result = await sendRequest<void, GenerateEducationLinksResponse>(`/tasks/links/${taskId}`, "GET")
+
+    if (!result) {
+        return {
+            type: "education-links",
+            content: { links: [] }
         }
     }
 

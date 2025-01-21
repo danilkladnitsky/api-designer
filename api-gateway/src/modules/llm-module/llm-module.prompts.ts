@@ -10,10 +10,12 @@ services:
 `
 
 const DOCKER_ANSWER_1 = `
+container: {
 {
     name: "backend",
     type: "docker",
     ports: [8001]
+}
 }
 `
 
@@ -41,9 +43,11 @@ services:
 
 const DOCKER_ANSWER_3 = `
 {
+container: {
     name: "service",
     type: "docker",
     ports: []
+}
 }
 `
 
@@ -55,9 +59,11 @@ services:
 
 const DOCKER_ANSWER_4 = `
 {
+container: {
     name: "backend_service",
     type: "docker",
     ports: []
+}
 }
 `
 
@@ -68,10 +74,12 @@ async def homepage():
 `
 
 const FEW_SHOT_ANSWER_1 = `
-[{
+{
+    endpoints: [{
     "url": "/",
     "method": "GET"
 }]
+}
 `
 
 const FEW_SHOT_QUESTION_2 = `
@@ -81,23 +89,44 @@ async def create_item(item: Item, item_id: int):
 `
 
 const FEW_SHOT_ANSWER_2 = `
-[{
+{
+    endpoints: [{
     "url": "/items/{item_id}",
     "method": "POST"
 }]
+}
 `
 
 export const PROMPTS = {
-    GENERATE_SERVICE_ENDPOINTS_GRAPH: (payload: BuildGraphCodeDto): string => {
+    SUGGEST_EDUCATION_LINKS: (topics: string[]): LLMInput[] => {
+        return [
+            {
+                role: "assistant",
+                content: `Ты ассистент для подбора учебных материалов в виде ссылок на ресурсы с документацией по программированию. Пришли массив из ссылок в виде:
+                {
+                    links: [{
+                        title: string,
+                        url: string
+                    }]
+                }
+                `
+            },
+            {
+                content: `Темы: ${topics.join(", ")}`,
+                role: "user"
+            }
+        ]
+    },
+    GENERATE_SERVICE_ENDPOINTS_GRAPH: (payload: BuildGraphCodeDto): LLMInput[] => {
         const fewShots: LLMInput[] = [
             {
-                content: `Ты парсер кода из Python в JSON. Найди все вызовы API и сконвертируй их в формат:
-                [{
+                content: `Ты парсер кода из Python в JSON. Найди все вызовы API и сконвертируй их в массив:
+                {
+                    endpoints: [{
                     url: string,
                     method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
                 }]
-
-                Верни только JSON
+                }
             `,
                 role: "assistant"
             },
@@ -110,31 +139,23 @@ export const PROMPTS = {
                 role: "assistant"
             }
         ]
-        const question = {
-            content: `
-                Выведи все API - функции в виде массива в формате
-                [{
-                    urt: string,
-                    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
-                }]
-                    Верни только JSON-массив
-
-                Ответь сразу и без комментариев.
-                ${payload.code}`
+        const question: LLMInput = {
+            role: "user",
+            content: payload.code
         }
 
-        return [...fewShots, question].reduce((acc, cur) => {
-            return `${acc}\n${cur.content}`
-        }, "")
+        return [...fewShots, question]
     },
-    GENERATE_DOCKER_GRAPH: (payload: BuildGraphCodeDto): string => {
+    GENERATE_DOCKER_GRAPH: (payload: BuildGraphCodeDto): LLMInput[] => {
         const fewShots: LLMInput[] = [
             {
                 content: `Ты парсер кода из YAML в JSON. Преобразуй его в формат:
                 {
+                    container: {
                     name: string,
                     type: "docker",
                     ports: number[]
+                }
                 }
 
                 Верни только JSON
@@ -158,13 +179,11 @@ export const PROMPTS = {
                 role: "assistant"
             }
         ]
-        const question = {
-            content: `Ответь сразу и без комментариев.
-                ${payload.code}`
+        const question: LLMInput = {
+            role: "user",
+            content: payload.code
         }
 
-        return [...fewShots, question].reduce((acc, cur) => {
-            return `${acc}\n${cur.content}`
-        }, "")
+        return [...fewShots, question]
     }
 }

@@ -1,9 +1,13 @@
-import { LLMInput } from "shared"
+import { LLMInput } from "shared/index"
 
 import { IServiceInstance } from "@/common/services"
+
+export type LLMResponse<TContent = string> = {
+    content: TContent
+}
 
 export interface ILLMAgentAdapter extends IServiceInstance {
     name: string
     setApiKey: (apiKey: string) => void
-    executePrompt: (input: LLMInput[]) => Promise<string>
+    executePrompt: <TContent>(input: LLMInput[]) => Promise<LLMResponse<TContent>>
 }

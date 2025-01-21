@@ -15,10 +15,25 @@ export const TaskDescription = ({ task, className }: Props) => {
     const { setTask } = useAppContext()
     return (
         <Box className={cn(styles.taskDescription, className)}>
-            <Text variant="body-2" className={styles.taskDescriptionText}>
-                {task?.description}
-            </Text>
-            <Button view="flat-contrast" size="l" onClick={() => setTask(null)}>Выбрать другую задачу</Button>
+            <Box className={styles.taskDescriptionText}>
+                <Box>
+                    <Text variant="subheader-2">Описание задачи</Text>
+                    <Box>
+                        <Text variant="body-2">
+                            {task?.description}
+                        </Text>
+                    </Box>
+                </Box>
+                <Box>
+                    <Text variant="subheader-2">Полезные ссылки</Text>
+                    <Box>
+                        <Text variant="body-2">
+                            Ссылки
+                        </Text>
+                    </Box>
+                </Box>
+            </Box>
+            <Button view="flat-contrast" size="xl" onClick={() => setTask(null)}>Выбрать другую задачу</Button>
         </Box>
     )
 }

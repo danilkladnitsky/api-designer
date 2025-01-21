@@ -9,13 +9,14 @@ import { CodeEditor } from "@/widgets/CodeEditor/CodeEditor"
 import { CodeGraph } from "@/widgets/CodeGraph/CodeGraph"
 import { TaskDescription } from "@/widgets/TaskDescription/TaskDescription"
 
+import { EditorTitle } from "./EditorTitle"
 import styles from "./TaskPage.module.scss"
 
 interface Props {
     task: Task
 }
 export const TaskPage = ({ task }: Props) => {
-    const { taskFiles, currentFile, solutionStatus, taskConfig, setTaskConfig, setCurrentFile, updateFileCode, checkSolution, clearSolutionStatus } = useAppContext()
+    const { isChecking, taskFiles, codeView, currentFile, taskConfig, solutionStatus, isGenerating, setTaskConfig, setCurrentFile, updateFileCode, checkSolution, clearSolutionStatus } = useAppContext()
 
     const handleFileSelect = (fileName: string) => {
         const task = taskFiles.find(file => file.fileName === fileName)
@@ -27,7 +28,7 @@ export const TaskPage = ({ task }: Props) => {
 
     const CodeEditorActions = () => (
         <Box className={styles.action}>
-            <Button size="l" onClick={checkSolution}>
+            <Button loading={isChecking} size="xl" onClick={checkSolution}>
                 Проверить
                 <Icon size={18} data={Play} />
             </Button>
@@ -50,21 +51,26 @@ export const TaskPage = ({ task }: Props) => {
                     <TaskDescription task={task} />
                 </Modal>
                 <Box className={styles.column}>
-                    <Modal className={styles.codeGraphWidget} title="Архитектура сервиса">
-                        <CodeGraph taskConfig={taskConfig} />
-                    </Modal>
-                    <Modal loading={!task} className={styles.codeEditorWidget} title="Редактор">
-                        <Tabs
-                            allowNotSelected
-                            className={styles.tabs}
-                            onSelectTab={handleFileSelect}
-                            size="m"
-                            activeTab={currentFile?.fileName}
-                            items={taskFiles.map(file => ({ id: file.fileName, title: file.fileName }))}
-                        />
-                        {taskFiles.map(file => (
-                            <CodeEditor footer={CodeEditorActions} language={file.language} key={file.fileName} className={file.fileName === currentFile?.fileName ? styles.activeCodeFile : styles.codeFile} currentCode={file.content} file={file} onFileCodeChange={updateFileCode} />
-                        ))}
+                    <Modal canMinify={false} loading={!task} className={styles.codeEditorWidget} title={<EditorTitle />}>
+                        {
+                            codeView === "code"
+                                ? (
+                                        <>
+                                            <Tabs
+                                                allowNotSelected
+                                                className={styles.tabs}
+                                                onSelectTab={handleFileSelect}
+                                                size="m"
+                                                activeTab={currentFile?.fileName}
+                                                items={taskFiles.map(file => ({ id: file.fileName, title: file.fileName }))}
+                                            />
+                                            {taskFiles.map(file => (
+                                                <CodeEditor footer={CodeEditorActions} language={file.language} key={file.fileName} className={file.fileName === currentFile?.fileName ? styles.activeCodeFile : styles.codeFile} currentCode={file.content} file={file} onFileCodeChange={updateFileCode} />
+                                            ))}
+                                        </>
+                                    )
+                                : <CodeGraph isLoading={isGenerating} taskConfig={taskConfig} />
+                        }
                     </Modal>
 
                 </Box>

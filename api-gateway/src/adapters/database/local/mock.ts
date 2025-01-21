@@ -48,8 +48,8 @@ const HELLO_WORLD_SOLUTION: TaskSolution = {
     taskId: "1",
     id: "1-solution",
     answer: {
-        container: { ports: [3000], type: "docker" },
-        router: { type: "docker" },
+        container: null,
+        router: null,
         services: [
             {
                 endpoints: [{
@@ -65,8 +65,8 @@ const USERS_CRUD_SOLUTION: TaskSolution = {
     taskId: "2",
     id: "2-solution",
     answer: {
-        container: { ports: [3000], type: "docker" },
-        router: { type: "docker" },
+        container: null,
+        router: null,
         services: [
             {
                 endpoints: [{
@@ -92,14 +92,10 @@ const USERS_CRUD_SOLUTION: TaskSolution = {
 
 const HELLO_WORLD_TASK: Task = {
     id: "1",
-    name: "Hello World",
-    description: `Спроектируйте сервис с единственным эндпоинтом - /hello-world, который возвращает "Hello World!"
-
-    Данный сервис должен быть размещен в Docker-контейнере, доступен по порту 3000, на который будет обращаться фронтенд.
-
-    Отредактируйте файлы main.py и docker-compose.yml соответственно.
+    name: "FastApi: Hello World",
+    description: `Спроектируйте простой бэкенд-сервис с единственным эндпоинтом - /hello-world, который возвращает "Hello World!". Эндпоинт должен быть доступен через методу GET.
     `,
-    files: [MOCK_PYTHON_SERVICE_CODE, MOCK_DOCKER_CODE],
+    files: [MOCK_PYTHON_SERVICE_CODE],
     config: {
         clients: [FRONTEND_CLIENT],
         services: [FASTAPI_SERVICE],
@@ -110,11 +106,9 @@ const HELLO_WORLD_TASK: Task = {
 
 const USERS_CRUD_TASK: Task = {
     id: "2",
-    name: "CRUD for users",
+    name: "FastApi: CRUD",
     description: `Создайте CRUD для сущности "Пользователи". 
 Ваш сервис должен позволять совершать основные операции: Создание, удаление, редактирование и получение пользователей.
-
-Откройте доступ к сервису на порту 8000.
 `,
     config: {
         clients: [FRONTEND_CLIENT],
@@ -122,7 +116,7 @@ const USERS_CRUD_TASK: Task = {
         container: null,
         router: null
     },
-    files: [MOCK_PYTHON_SERVICE_CODE, MOCK_DOCKER_CODE]
+    files: [MOCK_PYTHON_SERVICE_CODE]
 }
 
 export const MOCK_TASKS = [

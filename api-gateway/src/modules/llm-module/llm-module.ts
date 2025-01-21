@@ -1,42 +1,48 @@
-import { BuildGraphCodeDto } from "shared/dtos"
+import { BuildGraphCodeDto, GenerateEducationLinksResponse, GenerateEndpointsResponse } from "shared/dtos"
+import { LLMOutput } from "shared/index"
 
-import { IRedisAdapter } from "@/adapters/redis/redis.adapter"
-import { BROKER_CHANNELS } from "@/common/services"
+import { ILLMAgentAdapter } from "@/adapters/llm-agent/llm.adapter"
 
-import { BuildGraphCodeEvent } from "./llm-module.dto"
 import { PROMPTS } from "./llm-module.prompts"
 
 export interface ILLMModule {
-    buildCodeGraph: (code: BuildGraphCodeDto) => Promise<void>
+    buildCodeGraph: (code: BuildGraphCodeDto) => Promise<LLMOutput<GenerateEndpointsResponse>>
+    suggestEducationLinks: (topics: string[]) => Promise<LLMOutput<GenerateEducationLinksResponse>>
 }
 
 export interface ILLMModuleConstructor {
-    redis: IRedisAdapter
+    llmAgent: ILLMAgentAdapter
 
 }
 
-export const createLLModule = ({ redis }: ILLMModuleConstructor): ILLMModule => {
+export const createLLModule = ({ llmAgent }: ILLMModuleConstructor): ILLMModule => {
     return {
+        suggestEducationLinks: async (topics: string[]) => {
+            const { content } = await llmAgent.executePrompt<GenerateEducationLinksResponse>(PROMPTS.SUGGEST_EDUCATION_LINKS(topics))
+
+            return {
+                type: "education-links",
+                content
+            }
+        },
         buildCodeGraph: async (payload: BuildGraphCodeDto) => {
-            const getPrompt = (): BuildGraphCodeEvent => {
-                if (payload.extension === "py") {
-                    return {
-                        context: PROMPTS.GENERATE_SERVICE_ENDPOINTS_GRAPH(payload),
-                        input: payload.code,
-                        event: "generate-endpoints"
-                    }
-                }
-                else {
-                    return {
-                        context: PROMPTS.GENERATE_DOCKER_GRAPH(payload),
-                        input: payload.code,
-                        event: "generate-docker"
-                    }
+            if (payload.extension === "py") {
+                const { content } = await llmAgent.executePrompt<GenerateEndpointsResponse>(PROMPTS.GENERATE_SERVICE_ENDPOINTS_GRAPH(payload))
+
+                return {
+                    type: "endpoints",
+                    content
                 }
             }
+            else {
+                const { content } = await llmAgent.executePrompt<GenerateEndpointsResponse>(PROMPTS.GENERATE_DOCKER_GRAPH(payload))
 
-            redis.publish(BROKER_CHANNELS.GENERATE_CODE_GRAPH, {
-                data: getPrompt(), targetChannel: BROKER_CHANNELS.GET_GENERATED_CODE_GRAPH })
+                return {
+                    type: "container",
+                    content
+                }
+            }
         }
+
     }
 }

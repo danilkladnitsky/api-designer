@@ -10,8 +10,9 @@ export type LLMInput = {
     content: string;
 }
 
-export type LLMOutput = {
-    content: string;
+export type LLMOutput<TResponse = any, TType = string> = {
+    content: TResponse;
+    type: TType;
 };
 
 export type CodeAPIGraph = {

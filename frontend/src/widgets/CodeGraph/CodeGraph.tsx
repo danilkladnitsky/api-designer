@@ -34,13 +34,14 @@ const edgeTypes = {
 
 interface Props {
     taskConfig: TaskConfig
+    isLoading?: boolean
 }
 
-export const CodeGraph = ({ taskConfig }: Props) => {
+export const CodeGraph = ({ taskConfig, isLoading }: Props) => {
     const { edges, nodes } = useMemo(() => {
         const data = convertTaskConfigInProcessToCodeGraph(taskConfig)
-        return createLayout(data.nodes, data.edges)
-    }, [taskConfig])
+        return createLayout(data.nodes.map(n => ({ ...n, data: { ...n.data, loading: isLoading } })), data.edges)
+    }, [taskConfig, isLoading])
 
     return (
         <Box className={cn(styles.codeGraph)}>

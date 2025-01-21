@@ -1,7 +1,9 @@
 .taskList {
+    background-color: $secondary-background;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    height: 100%;
     padding: 24px;
 
 }
@@ -13,6 +15,7 @@
 }
 
 .task {
+    background-color: $tertiary-background;
     border: 1px solid $border-color;
     border-radius: 8px;
     display: flex;

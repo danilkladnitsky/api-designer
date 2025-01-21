@@ -1,5 +1,5 @@
 import OpenAI from "openai"
-import { LLMInput, LLMOutput } from "shared"
+import { LLMInput } from "shared/index"
 
 import { ILLMAgentAdapter } from "../llm.adapter"
 
@@ -11,22 +11,36 @@ export const createOpenAILLMAgent = async (): Promise<ILLMAgentAdapter> => {
         close: async () => {},
         setApiKey: (apiKey: string) => {
             client = new OpenAI({
-                apiKey
+                apiKey,
+                baseURL: "https://gptunnel.ru/v1/"
             })
         },
-        executePrompt: async (input: LLMInput): Promise<LLMOutput> => {
+        executePrompt: async (input: LLMInput[]) => {
             if (!client) {
                 throw new Error("OpenAI client not initialized")
             }
 
             const chatCompletion = await client.chat.completions.create({
-                messages: [{ role: input.role, content: input.content }],
+                messages: input,
                 model: "gpt-4o-mini",
-                max_tokens: 50
+                response_format: {
+                    type: "json_object" }
             })
 
+            console.log(chatCompletion)
+
+            const parseResponse = () => {
+                const chatResponse = chatCompletion.choices[0].message.content
+                try {
+                    return JSON.parse(chatResponse || "")
+                }
+                catch (error) {
+                    return { content: "" }
+                }
+            }
+
             return {
-                content: chatCompletion.choices[0].message.content || "no data"
+                content: parseResponse()
             }
         }
     }

@@ -1,5 +1,5 @@
 import { Box, Card, Text } from "@gravity-ui/uikit"
-import React, { useState } from "react"
+import React, { ReactNode, useState } from "react"
 
 import { cn } from "@/utils/cn"
 
@@ -12,7 +12,7 @@ import styles from "./Modal.module.scss"
 interface Props {
     children: React.ReactNode
     canMinify?: boolean
-    title?: string
+    title?: ReactNode
     className?: string
     loading?: boolean
     onClose?: () => void

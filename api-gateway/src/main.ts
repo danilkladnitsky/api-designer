@@ -4,10 +4,8 @@ import { startHttpServer } from "@/app/http/server"
 import { IServiceInstance } from "@/common/services"
 
 import { createLocalDatabase } from "./adapters/database/local/database.local"
-import { createRedisHosted } from "./adapters/redis/hosted/redis.hosted"
-import { createWsHostedAdapter } from "./adapters/ws/hosted/ws.hosted"
+import { createOpenAILLMAgent } from "./adapters/llm-agent/openai/agent.openai"
 import { getAppConfig } from "./app/config"
-import { startRedisBroker } from "./app/redis/broker"
 import { createCodeController, ICodeController } from "./controllers/code.controller"
 import { createHealthcheckkController } from "./controllers/healthcheck.controller"
 import {
@@ -32,35 +30,27 @@ const instantiateDatabase = async () => {
     return db
 }
 
-const instantiateRedis = async () => {
-    const redis = await createRedisHosted()
+const instantiateLLMAgents = async () => {
+    const llmAgent = await createOpenAILLMAgent()
+    llmAgent.setApiKey(config.OPENAI_API_KEY)
 
-    await redis.connect({ host: config.REDIS_HOST, port: config.REDIS_PORT, password: config.REDIS_PASSWORD })
-
-    return redis
+    return { llmAgent }
 }
 
-const instantiateWs = async () => {
-    const ws = await createWsHostedAdapter({ port: config.WS_PORT })
-
-    return ws
-}
-
-const instantiateModules = async ({ database, redis }: ITaskModuleConstructor & ILLMModuleConstructor) => {
+const instantiateModules = async ({ database, llmAgent }: ITaskModuleConstructor & ILLMModuleConstructor) => {
     const taskModule = createTaskModule({ database })
-    const llmModule = createLLModule({ redis })
+    const llmModule = createLLModule({ llmAgent })
     const codeModule = createCodeModule()
 
     return { taskModule, codeModule, llmModule }
 }
 
-const instantiateControllers = async ({ taskModule, codeModule, llmModule, ws }: ITaskController & ICodeController) => {
-    const taskController = createTaskController({ taskModule })
-    const codeController = createCodeController({ codeModule, llmModule, ws })
+const instantiateControllers = async ({ taskModule, codeModule, llmModule }: ITaskController & ICodeController) => {
+    const taskController = createTaskController({ taskModule, llmModule })
+    const codeController = createCodeController({ codeModule, llmModule })
     const healthCheckController = createHealthcheckkController()
 
     return {
-        redisSubscribers: [...codeController.redisHandlers!],
         httpHandlers: [...taskController.httpHandlers, ...codeController.httpHandlers, ...healthCheckController.httpHandlers]
     }
 }
@@ -74,31 +64,19 @@ const startApp = async () => {
     })
     services.push({ name: "database", close: database.close })
 
-    const redis = await instantiateRedis().catch((err) => {
-        console.error(err)
-        process.exit(1)
-    })
-
-    const ws = await instantiateWs().catch((err) => {
-        console.error(err)
-        process.exit(1)
-    })
-    services.push({ name: "websocket", close: ws.close })
-
-    const appControllers = await instantiateModules({ database, redis })
-        .then(modules => instantiateControllers({ ...modules, ws }))
+    const appControllers = await instantiateLLMAgents()
+        .then(({ llmAgent }) => instantiateModules({ database, llmAgent }))
+        .then(modules => instantiateControllers(modules))
 
     try {
-        const [httpServer, redisBroker] = await Promise.all([
+        const [httpServer] = await Promise.all([
             startHttpServer({
                 port: config.PORT,
                 host: config.HOST,
                 handlers: appControllers.httpHandlers
-            }),
-            startRedisBroker({ redis, subscribers: appControllers.redisSubscribers })
+            })
         ])
 
-        services.push(redisBroker)
         services.push(httpServer)
         addGracefulShutdown(services)
     }

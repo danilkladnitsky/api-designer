@@ -216,6 +216,14 @@ export const convertTaskConfigInProcessToCodeGraph = (taskConfig: TaskConfig) =>
                 type: "requestEdge"
             })
         }
+        else if (taskConfig.services[0]) {
+            edges.push({
+                id: `${client.id}-${taskConfig.services[0].id}`,
+                source: client.id,
+                target: taskConfig.services[0].id,
+                type: "requestEdge"
+            })
+        }
     })
 
     return { nodes, edges }
