@@ -1,6 +1,6 @@
 import { APIMethod, ControllerResponse } from "../../../shared-types"
 
-const API_URL = "http://localhost:80/api-gateway"
+const API_URL = "https://api-designer-api.kladnitsky.ru"
 
 export const sendRequest = async <TBody, TResponse>(url: string, method: APIMethod, body?: TBody) => {
     try {
