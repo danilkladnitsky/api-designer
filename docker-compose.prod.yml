@@ -1,13 +1,10 @@
 version: '3.8'
 
 services:
-  redis:
-    container_name: redis-broker
-  
   api-gateway:
     container_name: api-gateway
-    build: 
+    build:
+      context: ./api-gateway
       dockerfile: ./backend/Dockerfile
-  
-  llm-service:
-    container_name: llm-service
+    volumes:
+      - ./shared-types:/usr/src/shared-types
