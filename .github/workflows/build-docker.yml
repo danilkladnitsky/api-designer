@@ -101,7 +101,8 @@ jobs:
       - name: Push backend image
         uses: docker/build-push-action@v4
         with:
-          context: api-gateway
+          context: .
+          file: api-gateway/Dockerfile
           push: true
           tags: ${{env.backend}}:latest
           cache-from: type=registry,ref=${{env.backend}}:latest
