@@ -5,6 +5,6 @@ services:
     container_name: api-gateway
     build:
       context: ./api-gateway
-      dockerfile: ./backend/Dockerfile
+      dockerfile: Dockerfile.dev
     volumes:
       - ./shared-types:/usr/src/shared-types
