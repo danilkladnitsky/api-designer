@@ -7,7 +7,7 @@ export const Header = () => {
         <Box className={styles.header}>
             <Box className={styles.headerLeft}>
                 <Text variant="header-1">
-                    API Designer
+                    API Designer (beta)
                 </Text>
                 <img height={32} src="/talent-hub-logo.png" />
             </Box>
